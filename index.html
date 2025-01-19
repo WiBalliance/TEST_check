@@ -41,10 +41,6 @@
       日付選択:
       <input type="date" id="datePicker" />
     </label>
-    <label>
-      タスク名でフィルタ:
-      <input type="text" id="taskNameFilter" placeholder="タスク名でフィルタ" />
-    </label>
     <button id="copyButton">指定日付のイベントをコピー</button>
     <label>
       <input type="checkbox" id="showCompleted" />
@@ -71,12 +67,11 @@
     };
 
     // ガントチャートを更新する関数
-    const updateGantt = (showCompleted, nameFilter = '') => {
+    const updateGantt = (showCompleted) => {
       const now = new Date();
       const filteredTasks = allTasks.filter(task => {
         const end = new Date(task.end);
-        const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-        return (showCompleted || end > now) && matchesName; // 終了したイベントを表示するかどうか、かつ名前でフィルタ
+        return showCompleted || end > now; // 終了したイベントを表示するかどうか
       });
 
       const gantt = new Gantt("#gantt", filteredTasks, {
@@ -100,15 +95,7 @@
 
     // チェックボックスのイベントリスナー
     document.getElementById("showCompleted").addEventListener("change", (event) => {
-      const nameFilter = document.getElementById("taskNameFilter").value;
-      updateGantt(event.target.checked, nameFilter);
-    });
-
-    // タスク名でフィルタするイベントリスナー
-    document.getElementById("taskNameFilter").addEventListener("input", (event) => {
-      const nameFilter = event.target.value;
-      const showCompleted = document.getElementById("showCompleted").checked;
-      updateGantt(showCompleted, nameFilter);
+      updateGantt(event.target.checked);
     });
 
     // コピー機能の実装
@@ -133,7 +120,12 @@
         return;
       }
 
-      const tasksToCopy = targetTasks.map(task => task.name).join('\n');
+      const tasksToCopy = targetTasks.map(task => {
+        const startTime = new Date(task.start);
+        const startTimeFormatted = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
+        return `${startTimeFormatted} ～ ${task.name}`;
+      }).join('\n');
+
       const textArea = document.createElement("textarea");
       textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
