@@ -22,7 +22,7 @@
     }
     .top-buttons {
       display: flex;
-      flex-direction: column;
+      flex-direction: column; /* 縦に並べる */
       align-items: flex-start;
       margin-bottom: 20px;
     }
@@ -75,24 +75,18 @@
     const generateRegularTasks = (regularTask) => {
       const tasks = [];
       const startDate = new Date(regularTask.start);
+      const endDate = new Date(regularTask.end);
       const interval = regularTask.interval; // 毎日の場合、1、毎週の場合は7など
-
-      // 終了日が無い場合は現在から1ヶ月後を設定
-      const endDate = regularTask.end ? new Date(regularTask.end) : new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
       let currentStart = startDate;
       while (currentStart <= endDate) {
-        // 開始時刻を8:00、終了時刻を17:00に設定
-        const taskStart = new Date(currentStart.setHours(8, 0, 0));
-        const taskEnd = new Date(currentStart.setHours(17, 0, 0));
-
         tasks.push({
           name: regularTask.name,
-          start: taskStart.toISOString(),
-          end: taskEnd.toISOString(),
+          start: currentStart.toISOString().split('T')[0] + " 08:00",
+          end: new Date(currentStart.getTime() + 1000 * 60 * 60 * 8).toISOString().split('T')[0] + " 17:00", // 8時間のタスクとして設定
           progress: calculateProgress({
-            start: taskStart,
-            end: taskEnd
+            start: currentStart,
+            end: new Date(currentStart.getTime() + 1000 * 60 * 60 * 8)
           })
         });
 
@@ -114,15 +108,7 @@
       const gantt = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD",
-        editable: false,
-        custom_popup_html: function(task) {
-          return `<div class="details-container">
-                    <strong>タスク名:</strong> ${task.name} <br/>
-                    <strong>開始:</strong> ${new Date(task.start).toLocaleString()} <br/>
-                    <strong>終了:</strong> ${new Date(task.end).toLocaleString()} <br/>
-                    <strong>進捗:</strong> ${task.progress.toFixed(2)}% <br/>
-                  </div>`;
-        }
+        editable: false
       });
     };
 
@@ -146,7 +132,7 @@
         tasks.forEach(task => {
           regularTasks = [...regularTasks, ...generateRegularTasks(task)];
         });
-        updateGantt(false); // 定期タスクを含めて初期表示
+        updateGantt(false); // 定期的なタスクを含めて初期表示
       })
       .catch(error => console.error('Error loading regular_tasks.json:', error));
 
@@ -170,48 +156,35 @@
         alert("日付を選択してください");
         return;
       }
-    
+
       const targetDate = new Date(selectedDate);
       const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
-    
+
       // 経過日数を計算
       const today = new Date();
       const diffTime = targetDate - today;
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 経過日数
-    
+
       const targetTasks = [...allTasks, ...regularTasks].filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
         return start <= targetDate && end >= targetDate;
       });
-    
+
       if (targetTasks.length === 0) {
         alert(`${formattedDate}にはイベントがありません`);
         return;
       }
-    
+
+      // コピーするタスクに開始時間を追加
       const tasksToCopy = targetTasks.map(task => {
         const startTime = new Date(task.start);
         const startTimeFormatted = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
-        return `${startTimeFormatted} ～ ${task.name} (${diffDays}日目)`;
+        const taskStartDate = new Date(task.start);
+        const taskDiffDays = Math.floor((taskStartDate - new Date(taskStartDate.getFullYear(), taskStartDate.getMonth(), taskStartDate.getDate())) / (1000 * 60 * 60 * 24)) + 1;
+        return `${startTimeFormatted} ～ ${task.name} (${taskDiffDays}日目)`;
       }).join('\n');
-    
-      const textArea = document.createElement("textarea");
-      textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
-      document.body.appendChild(textArea);
-      textArea.select();
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textArea);
-    
-      alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
-    });
 
-      if (targetTasks.length === 0) {
-        alert(`${formattedDate}にはイベントがありません`);
-        return;
-      }
-
-      const tasksToCopy = targetTasks.map(task => `${task.name} (${diffDays}日目)`).join('\n');
       const textArea = document.createElement("textarea");
       textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
