@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tasks_toride_1",
+    "name": "砦争奪戦",
+    "start": "2025-01-21 09:00",
+    "end": "2025-01-24 09:00",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "tasks_toride_2",
+    "name": "砦争奪戦 アンケート",
+    "start": "2025-01-21 09:00",
+    "end": "2025-01-23 09:00",
+    "progress": 0,
+    "dependencies": "tasks_toride_1"
+  },
+  {
+    "id": "tasks_toride_3",
+    "name": "砦争奪戦 本戦",
+    "start": "2025-01-24 18:00",
+    "end": "2025-01-24 18:30",
+    "progress": 0,
+    "dependencies": "tasks_toride_2"
+  }
+]
