@@ -110,15 +110,5 @@
     "end": "2025-01-24 09:00",
     "progress": 0,
     "dependencies": ""
-  },
-  {
-    "id": "Task 12",
-    "name": "熊罠 1",
-    "start": "2025-01-22 21:00",
-    "end": "2025-01-22 21:30",
-    "progress": 0,
-    "dependencies": "",
-    "repeat_interval": 2,  // 2日おき
-    "max_occurrences": 10  // 最大10回繰り返し
   }
 ]
