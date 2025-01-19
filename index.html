@@ -25,22 +25,13 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .month-line {
-      stroke: black;
-      stroke-width: 2px;
-    }
-    .week-line {
-      stroke: orange;
-      stroke-width: 1px;
-    }
   </style>
 </head>
 <body>
   <div class="top-buttons">
-    <button id="copyButton">翌日のイベントをコピー</button>
+    <button id="copyButton">指定日付のイベントをコピー</button>
     <label>
-      <input type="checkbox" id="showCompleted" />
-      終了したタスクを表示
+      <input type="date" id="datePicker" />
     </label>
   </div>
   <h1>イベントスケジュール</h1>
@@ -62,56 +53,18 @@
       return (elapsedTime / totalDuration) * 100;
     };
 
-    // ガントチャートにカスタム線を追加する関数
-    const addCustomLines = () => {
-      const svg = document.querySelector('.gantt .grid .grid-row');
-      if (!svg) return;
-
-      const allDays = document.querySelectorAll('.gantt .grid .grid-row .grid-cell');
-      allDays.forEach((day, index) => {
-        const date = new Date(day.dataset.date);
-        const nextDate = index + 1 < allDays.length ? new Date(allDays[index + 1].dataset.date) : null;
-
-        // 月の変わり目
-        if (nextDate && date.getMonth() !== nextDate.getMonth()) {
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", day.getBoundingClientRect().right);
-          line.setAttribute("x2", day.getBoundingClientRect().right);
-          line.setAttribute("y1", 0);
-          line.setAttribute("y2", 500);
-          line.classList.add("month-line");
-          svg.appendChild(line);
-        }
-
-        // 週の変わり目
-        if (date.getDay() === 0) { // 日曜日の場合
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", day.getBoundingClientRect().right);
-          line.setAttribute("x2", day.getBoundingClientRect().right);
-          line.setAttribute("y1", 0);
-          line.setAttribute("y2", 500);
-          line.classList.add("week-line");
-          svg.appendChild(line);
-        }
-      });
-    };
-
     // ガントチャートを更新する関数
-    const updateGantt = (showCompleted) => {
+    const updateGantt = () => {
       const now = new Date();
       const filteredTasks = allTasks.filter(task => {
         const end = new Date(task.end);
-        return showCompleted || end > now; // 終了したタスクを表示するかどうか
+        return end > now; // 終了したタスクを非表示にする
       });
 
-      // ガントチャートの初期化
       const gantt = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD",
-        custom_popup_html: null,
-        on_render: () => {
-          addCustomLines();
-        }
+        editable: false
       });
     };
 
@@ -123,38 +76,41 @@
           ...task,
           progress: calculateProgress(task)
         }));
-        updateGantt(false); // 初期表示では終了したタスクを非表示にする
+        updateGantt(); // 初期表示
       })
       .catch(error => console.error('Error loading tasks.json:', error));
 
-    // チェックボックスのイベントリスナー
-    document.getElementById("showCompleted").addEventListener("change", (event) => {
-      updateGantt(event.target.checked);
-    });
-
-    // 翌日のタスクを取得してコピーする機能
+    // コピー機能の実装
     document.getElementById("copyButton").addEventListener("click", () => {
-      const now = new Date();
-      const tomorrow = new Date();
-      tomorrow.setDate(now.getDate() + 1);
-    
-      const formattedDate = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`; // 翌日のフォーマットされた日付
-    
-      const tomorrowTasks = allTasks.filter(task => {
+      const selectedDate = document.getElementById("datePicker").value;
+      if (!selectedDate) {
+        alert("日付を選択してください");
+        return;
+      }
+
+      const targetDate = new Date(selectedDate);
+      const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+
+      const targetTasks = allTasks.filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
-        return start <= tomorrow && end >= tomorrow;
+        return start <= targetDate && end >= targetDate;
       });
-    
-      const tasksToCopy = tomorrowTasks.map(task => task.name).join('\n');
+
+      if (targetTasks.length === 0) {
+        alert(`${formattedDate}にはタスクがありません`);
+        return;
+      }
+
+      const tasksToCopy = targetTasks.map(task => task.name).join('\n');
       const textArea = document.createElement("textarea");
       textArea.value = `${formattedDate}のタスク:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
       textArea.select();
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-    
-      alert(successful ? `${formattedDate}のタスクをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
+
+      alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
     });
   </script>
 </body>
