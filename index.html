@@ -33,6 +33,10 @@
     <label>
       <input type="date" id="datePicker" />
     </label>
+    <label>
+      <input type="checkbox" id="showCompleted" />
+      終了したタスクを表示
+    </label>
   </div>
   <h1>イベントスケジュール</h1>
   <div id="gantt"></div>
@@ -54,11 +58,11 @@
     };
 
     // ガントチャートを更新する関数
-    const updateGantt = () => {
+    const updateGantt = (showCompleted) => {
       const now = new Date();
       const filteredTasks = allTasks.filter(task => {
         const end = new Date(task.end);
-        return end > now; // 終了したタスクを非表示にする
+        return showCompleted || end > now; // 終了したタスクを表示するかどうか
       });
 
       const gantt = new Gantt("#gantt", filteredTasks, {
@@ -76,9 +80,14 @@
           ...task,
           progress: calculateProgress(task)
         }));
-        updateGantt(); // 初期表示
+        updateGantt(false); // 初期表示では終了したタスクを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
+
+    // チェックボックスのイベントリスナー
+    document.getElementById("showCompleted").addEventListener("change", (event) => {
+      updateGantt(event.target.checked);
+    });
 
     // コピー機能の実装
     document.getElementById("copyButton").addEventListener("click", () => {
