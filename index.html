@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>イベントスケジュール - カレンダー形式</title>
+  
   <!-- FullCalendarのCSSとJSを読み込む -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -75,7 +77,11 @@
           },
           events: events,  // タスクデータをカレンダーに設定
           editable: false, // イベントを編集できないようにする
-          droppable: false // ドラッグ＆ドロップを無効化
+          droppable: false, // ドラッグ＆ドロップを無効化
+          eventRender: function(event, element) {
+            // 必要に応じてイベントのカスタマイズ
+            element.attr('title', event.description); // ツールチップ表示
+          }
         });
       })
       .catch(error => console.error('Error loading tasks.json:', error));
