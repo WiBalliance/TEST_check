@@ -135,10 +135,12 @@
       const targetTasks = allTasks.filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
+        
+        // ターゲット日付を基準に、開始時間や終了時間が短い場合でも重なっていればコピー対象にする
+        const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
+        const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
       
-        // タスクがターゲット日付と重なるか、ターゲット日付に関連している場合
-        return (start <= targetDate && end >= targetDate) || 
-               (start <= targetDate && end >= targetDate.setHours(23, 59, 59, 999));
+        return (start < targetEndDate && end > targetStartDate); // 開始日または終了日がターゲット日と重なる場合
       });
     
       if (targetTasks.length === 0) {
