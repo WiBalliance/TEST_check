@@ -119,22 +119,17 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        // 繰り返しイベントを計算してタスクに追加
-        tasks.forEach(task => {
-          if (task.repeat_interval && task.max_occurrences) {
-            const recurringTasks = calculateRecurringTasks(task);
-            allTasks.push(...recurringTasks);
-          } else {
-            allTasks.push(task);
-          }
+        // 繰り返しイベントの計算を追加
+        const tasksWithRecurring = tasks.flatMap(task => {
+          const recurringTasks = task.repeat_interval ? calculateRecurringTasks(task) : [];
+          return [task, ...recurringTasks]; // 元のタスクと繰り返しタスクを統合
         });
-
-        // 進捗を追加
-        allTasks = allTasks.map(task => ({
+        
+        allTasks = tasksWithRecurring.map(task => ({
           ...task,
           progress: calculateProgress(task)
         }));
-
+        
         updateGantt(false); // 初期表示では終了したイベントを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
