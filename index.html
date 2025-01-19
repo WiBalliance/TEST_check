@@ -125,7 +125,7 @@
       // 経過日数を計算
       const today = new Date();
       const diffTime = targetDate - today;
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 経過日数
+      const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 経過日数
 
       const targetTasks = allTasks.filter(task => {
         const start = new Date(task.start);
