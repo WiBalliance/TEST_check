@@ -1,11 +1,10 @@
 [
   {
-    "id": "Task 1",
-    "name": "熊狩り 1",
-    "start": "2025-01-21",
-    "end": null,  // 終了日なし
+    "id": "Task 12",
+    "name": "熊罠 1",
+    "start": "2025-01-22 21:00",
+    "end": "2025-01-22 21:30",
     "progress": 0,
-    "interval": 1,
     "dependencies": ""
   }
 ]
