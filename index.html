@@ -140,9 +140,10 @@
 
       const tasksToCopy = targetTasks.map(task => {
         const taskStartDate = new Date(task.start);
+        const taskStartTime = taskStartDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 時間のフォーマット
         const diffTime = targetDate - taskStartDate;
         const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
-        return `${task.name} (${diffDays}日目)`;  // 開始日からの日数を表示
+        return `${taskStartTime}~ ${task.name}（${diffDays}日目）`;  // 時刻~イベント名（n日目）を表示
       }).join('\n');
 
       const textArea = document.createElement("textarea");
