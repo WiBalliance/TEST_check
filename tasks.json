@@ -2,112 +2,112 @@
   {
     "id": "Task 1",
     "name": "穴釣り選手権",
-    "start": "2025-01-21T09:00:00Z",
-    "end": "2025-01-23T24:00:00Z",
+    "start": "2025-01-21",
+    "end": "2025-01-23",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 2",
     "name": "雪原貿易",
-    "start": "2025-01-20T09:00:00Z",
-    "end": "2025-01-21T24:00:00Z",
+    "start": "2025-01-20",
+    "end": "2025-01-21",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 3",
     "name": "氷原支配者",
-    "start": "2025-01-13T09:00:00Z",
-    "end": "2025-01-19T24:00:00Z",
+    "start": "2025-01-13",
+    "end": "2025-01-19",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 6",
     "name": "同盟総動員",
-    "start": "2025-01-13T09:00:00Z",
-    "end": "2025-01-19T24:00:00Z",
+    "start": "2025-01-13",
+    "end": "2025-01-19",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 4",
     "name": "軍備競技",
-    "start": "2025-01-20T09:00:00Z",
-    "end": "2025-01-21T24:00:00Z",
+    "start": "2025-01-20",
+    "end": "2025-01-21",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 5",
     "name": "峡谷合戦",
-    "start": "2025-01-20T09:00:00Z",
-    "end": "2025-01-25T24:00:00Z",
+    "start": "2025-01-20",
+    "end": "2025-01-25",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 6",
     "name": "同盟総動員",
-    "start": "2025-01-20T09:00:00Z",
-    "end": "2025-01-25T24:00:00Z",
+    "start": "2025-01-20",
+    "end": "2025-01-25",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 7",
     "name": "兵器工場争奪戦",
-    "start": "2025-01-20T09:00:00Z",
-    "end": "2025-01-26T24:00:00Z",
+    "start": "2025-01-20",
+    "end": "2025-01-26",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 8",
     "name": "同盟争覇戦",
-    "start": "2025-01-20T09:00:00Z",
-    "end": "2025-01-26T24:00:00Z",
+    "start": "2025-01-20",
+    "end": "2025-01-26",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 9",
     "name": "砦争奪戦",
-    "start": "2025-01-21T09:00:00Z",
-    "end": "2025-01-24T24:00:00Z",
+    "start": "2025-01-21",
+    "end": "2025-01-24",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 9-1",
     "name": "砦争奪戦 アンケート",
-    "start": "2025-01-21T09:00:00Z",
-    "end": "2025-01-23T24:00:00Z",
+    "start": "2025-01-21",
+    "end": "2025-01-23",
     "progress": 0,
     "dependencies": "Task 9"
   },
   {
     "id": "Task 9-2",
     "name": "砦争奪戦 本戦",
-    "start": "2025-01-23T09:00:00Z",
-    "end": "2025-01-23T24:00:00Z",
+    "start": "2025-01-23",
+    "end": "2025-01-23",
     "progress": 0,
     "dependencies": "Task 9-1"
   },
   {
     "id": "Task 10",
     "name": "士官計画",
-    "start": "2025-01-22T09:00:00Z",
-    "end": "2025-01-23T24:00:00Z",
+    "start": "2025-01-22",
+    "end": "2025-01-23",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "Task 11",
     "name": "ジーナの復讐",
-    "start": "2025-01-22T09:00:00Z",
-    "end": "2025-01-24T24:00:00Z",
+    "start": "2025-01-22",
+    "end": "2025-01-24",
     "progress": 0,
     "dependencies": ""
   }
