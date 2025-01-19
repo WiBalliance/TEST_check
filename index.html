@@ -123,15 +123,15 @@
         alert("日付を選択してください");
         return;
       }
-    
+
       const targetDate = new Date(selectedDate);
       const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
-    
+
       // 経過日数を各タスクの開始日から計算
       const today = new Date();
       const targetStartDate = new Date(targetDate);  // 日付選択の開始日
       const targetStartFormattedDate = `${targetStartDate.getFullYear()}-${String(targetStartDate.getMonth() + 1).padStart(2, '0')}-${String(targetStartDate.getDate()).padStart(2, '0')}`;
-    
+
       const targetTasks = allTasks.filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
@@ -169,10 +169,10 @@
 
       const tasksToCopy = targetTasks.map(task => {
         const taskStartDate = new Date(task.start);
-        const taskStartTime = taskStartDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 時間のフォーマット
+        const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`; // 開始時刻の取得
         const diffTime = targetDate - taskStartDate;
         const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
-        return `${taskStartTime}~ ${task.name}（${diffDays}日目）`;  // 時刻~イベント名（n日目）を表示
+        return `${taskStartFormattedTime}~ ${task.name} (${diffDays}日目)`;  // 時刻 + イベント名 + 開始日からの日数
       }).join('\n');
 
       const textArea = document.createElement("textarea");
