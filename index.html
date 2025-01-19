@@ -82,13 +82,17 @@
 
       let currentStart = startDate;
       while (currentStart <= endDate) {
+        // 開始時刻を8:00、終了時刻を17:00に設定
+        const taskStart = new Date(currentStart.setHours(8, 0, 0));
+        const taskEnd = new Date(currentStart.setHours(17, 0, 0));
+
         tasks.push({
           name: regularTask.name,
-          start: currentStart.toISOString().split('T')[0] + " 08:00",
-          end: new Date(currentStart.getTime() + 1000 * 60 * 60 * 8).toISOString().split('T')[0] + " 17:00", // 8時間のタスクとして設定
+          start: taskStart.toISOString(),
+          end: taskEnd.toISOString(),
           progress: calculateProgress({
-            start: currentStart,
-            end: new Date(currentStart.getTime() + 1000 * 60 * 60 * 8)
+            start: taskStart,
+            end: taskEnd
           })
         });
 
@@ -110,7 +114,15 @@
       const gantt = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD",
-        editable: false
+        editable: false,
+        custom_popup_html: function(task) {
+          return `<div class="details-container">
+                    <strong>タスク名:</strong> ${task.name} <br/>
+                    <strong>開始:</strong> ${new Date(task.start).toLocaleString()} <br/>
+                    <strong>終了:</strong> ${new Date(task.end).toLocaleString()} <br/>
+                    <strong>進捗:</strong> ${task.progress.toFixed(2)}% <br/>
+                  </div>`;
+        }
       });
     };
 
@@ -186,7 +198,7 @@
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
 
-      alert(successful ? `${formattedDate}のイベントをコピーしました` : "コピーに失敗しました。手動でコピーしてください。");
+      alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
     });
   </script>
 </body>
