@@ -44,7 +44,7 @@
     <button id="copyButton">指定日付のイベントをコピー</button>
     <label>
       <input type="checkbox" id="showCompleted" />
-      終了したタスクを表示
+      終了したイベントを表示
     </label>
   </div>
 
@@ -71,7 +71,7 @@
       const now = new Date();
       const filteredTasks = allTasks.filter(task => {
         const end = new Date(task.end);
-        return showCompleted || end > now; // 終了したタスクを表示するかどうか
+        return showCompleted || end > now; // 終了したイベントを表示するかどうか
       });
 
       const gantt = new Gantt("#gantt", filteredTasks, {
@@ -81,7 +81,7 @@
       });
     };
 
-    // JSONファイルからタスクデータを読み込む
+    // JSONファイルからイベントデータを読み込む
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
@@ -89,7 +89,7 @@
           ...task,
           progress: calculateProgress(task)
         }));
-        updateGantt(false); // 初期表示では終了したタスクを非表示にする
+        updateGantt(false); // 初期表示では終了したイベントを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
 
@@ -116,13 +116,13 @@
       });
 
       if (targetTasks.length === 0) {
-        alert(`${formattedDate}にはタスクがありません`);
+        alert(`${formattedDate}にはイベントがありません`);
         return;
       }
 
       const tasksToCopy = targetTasks.map(task => task.name).join('\n');
       const textArea = document.createElement("textarea");
-      textArea.value = `${formattedDate}のタスク:\n${tasksToCopy}`;
+      textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
       textArea.select();
       const successful = document.execCommand('copy');
