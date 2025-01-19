@@ -57,27 +57,6 @@
   <script>
     let allTasks = []; // すべてのタスクデータを保持
 
-    // イベントファイルのリスト
-    const eventFiles = ['tasks.json', 'regular_tasks.json']; // 必要な .json ファイルをリストで指定
-
-    // イベントデータを読み込む関数
-    const loadEvents = () => {
-      allTasks = []; // すべてのタスクデータをリセット
-      Promise.all(eventFiles.map(file =>
-        fetch(file)
-          .then(response => response.json())
-          .then(tasks => {
-            // 各ファイルのタスクをまとめる
-            allTasks = allTasks.concat(tasks);
-          })
-          .catch(error => console.error('Error loading event file:', error))
-      ))
-      .then(() => {
-        // すべてのファイルが読み込まれた後、ガントチャートを更新
-        updateGantt(false); // 初期表示では終了したイベントを非表示にする
-      });
-    };
-
     // 進捗をタスクの開始日と終了日から計算する関数
     const calculateProgress = (task) => {
       const now = new Date();
@@ -104,13 +83,43 @@
     
         return (showCompleted || endDate >= now) && matchesName;
       });
-
+    
       const gantt = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD", // 日付の表示形式
         editable: false
       });
     };
+
+    // 複数のJSONファイルを読み込む関数
+    const loadTasks = async () => {
+      const taskFiles = [
+        'task_1.json',
+        'task_2.json',
+        'task_3.json',
+        'task_4.json',
+        'task_5.json',
+        'task_6.json',
+        'task_7.json',
+        'task_8.json',
+        'task_9.json',
+        'task_10.json',
+        'task_11.json',
+        'task_12.json'
+      ];
+
+      try {
+        const tasks = await Promise.all(taskFiles.map(file =>
+          fetch(file).then(response => response.json())
+        ));
+        allTasks = tasks.flat(); // タスクを1つの配列にまとめる
+        updateGantt(false); // 初期表示
+      } catch (error) {
+        console.error('Error loading tasks:', error);
+      }
+    };
+
+    loadTasks(); // ファイルの読み込みを開始
 
     // チェックボックスのイベントリスナー
     document.getElementById("showCompleted").addEventListener("change", (event) => {
@@ -174,9 +183,6 @@
     
       alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
     });
-
-    // 初期データの読み込み
-    loadEvents(); // ページ読み込み時にイベントファイルを読み込み
   </script>
 </body>
 </html>
