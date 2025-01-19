@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>イベントスケジュール - カレンダー形式</title>
+  <!-- FullCalendarのCSSとJSを読み込む -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #calendar {
+      margin-top: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>イベントスケジュール - カレンダー形式</h1>
+  
+  <div id="calendar"></div>
+
+  <button id="copyButton">翌日のタスクをコピー</button>
+
+  <script>
+    // 進捗をタスクの開始日と終了日から計算する関数
+    const calculateProgress = (task) => {
+      const now = new Date();
+      const start = new Date(task.start);
+      const end = new Date(task.end);
+      
+      // タスクの総期間（ミリ秒）
+      const totalDuration = end - start;
+      
+      // 現在の日付からタスクの開始日までの経過時間（ミリ秒）
+      const elapsedTime = now - start;
+
+      // 経過時間に基づいて進捗をパーセンテージで計算
+      if (elapsedTime < 0) return 0; // タスクがまだ開始されていない場合
+      if (elapsedTime > totalDuration) return 100; // タスクが完了した場合
+      return (elapsedTime / totalDuration) * 100;
+    };
+
+    // JSONファイルからタスクデータを読み込む
+    fetch('tasks.json')
+      .then(response => response.json())
+      .then(tasks => {
+        // タスクデータをFullCalendar用に変換
+        const events = tasks.map(task => {
+          return {
+            title: task.name,
+            start: task.start,
+            end: task.end,
+            description: task.description || '',
+            progress: calculateProgress(task), // 進捗を含める
+          };
+        });
+
+        // FullCalendarの初期化
+        $('#calendar').fullCalendar({
+          header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+          },
+          events: events,  // タスクデータをカレンダーに設定
+          editable: false, // イベントを編集できないようにする
+          droppable: false // ドラッグ＆ドロップを無効化
+        });
+      })
+      .catch(error => console.error('Error loading tasks.json:', error));
+
+    // 翌日のタスクをコピーする機能
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const now = new Date();
+      const tomorrow = new Date();
+      tomorrow.setDate(now.getDate() + 1); // 翌日の日付を設定
+
+      fetch('tasks.json')
+        .then(response => response.json())
+        .then(tasks => {
+          const tomorrowTasks = tasks.filter(task => {
+            const start = new Date(task.start);
+            const end = new Date(task.end);
+            return start <= tomorrow && end >= tomorrow; // 翌日に該当するタスク
+          });
+
+          const tasksToCopy = {
+            tomorrowTasks: tomorrowTasks.map(task => task.name)
+          };
+
+          const textToCopy = `翌日のタスク: \n${tasksToCopy.tomorrowTasks.join('\n')}`;
+
+          // クリップボードにコピー (document.execCommandを利用)
+          const textArea = document.createElement("textarea");
+          textArea.value = textToCopy;
+          document.body.appendChild(textArea);
+          textArea.select();
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textArea);
+
+          if (successful) {
+            alert("翌日のタスクをコピーしました！");
+          } else {
+            alert("コピーに失敗しました。手動でコピーしてください。");
+          }
+        })
+        .catch(error => {
+          console.error('Error loading tasks.json:', error);
+          alert("タスクデータの読み込みに失敗しました。");
+        });
+    });
+  </script>
+</body>
+</html>
