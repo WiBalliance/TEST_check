@@ -56,6 +56,7 @@
 
   <script>
     let allTasks = []; // すべてのタスクデータを保持
+    let regularTasks = []; // 定期的なタスクデータを保持
 
     // 進捗をタスクの開始日と終了日から計算する関数
     const calculateProgress = (task) => {
@@ -70,10 +71,35 @@
       return (elapsedTime / totalDuration) * 100;
     };
 
+    // 定期的なタスクをスケジュールする関数
+    const generateRegularTasks = (regularTask) => {
+      const tasks = [];
+      const startDate = new Date(regularTask.start);
+      const endDate = new Date(regularTask.end);
+      const interval = regularTask.interval; // 毎日の場合、1、毎週の場合は7など
+
+      let currentStart = startDate;
+      while (currentStart <= endDate) {
+        tasks.push({
+          name: regularTask.name,
+          start: currentStart.toISOString().split('T')[0] + " 08:00",
+          end: new Date(currentStart.getTime() + 1000 * 60 * 60 * 8).toISOString().split('T')[0] + " 17:00", // 8時間のタスクとして設定
+          progress: calculateProgress({
+            start: currentStart,
+            end: new Date(currentStart.getTime() + 1000 * 60 * 60 * 8)
+          })
+        });
+
+        // 次のインターバル日を設定
+        currentStart.setDate(currentStart.getDate() + interval);
+      }
+      return tasks;
+    };
+
     // ガントチャートを更新する関数
     const updateGantt = (showCompleted, nameFilter = '') => {
       const now = new Date();
-      const filteredTasks = allTasks.filter(task => {
+      const filteredTasks = [...allTasks, ...regularTasks].filter(task => {
         const end = new Date(task.end);
         const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
         return (showCompleted || end > now) && matchesName; // 終了したイベントを表示するかどうか、かつ名前でフィルタ
@@ -97,6 +123,18 @@
         updateGantt(false); // 初期表示では終了したイベントを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
+
+    // 定期的なタスクの読み込み
+    fetch('regular_tasks.json')
+      .then(response => response.json())
+      .then(tasks => {
+        regularTasks = [];
+        tasks.forEach(task => {
+          regularTasks = [...regularTasks, ...generateRegularTasks(task)];
+        });
+        updateGantt(false); // 定期的なタスクを含めて初期表示
+      })
+      .catch(error => console.error('Error loading regular_tasks.json:', error));
 
     // チェックボックスのイベントリスナー
     document.getElementById("showCompleted").addEventListener("change", (event) => {
@@ -127,7 +165,7 @@
       const diffTime = targetDate - today;
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 経過日数
 
-      const targetTasks = allTasks.filter(task => {
+      const targetTasks = [...allTasks, ...regularTasks].filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
         return start <= targetDate && end >= targetDate;
