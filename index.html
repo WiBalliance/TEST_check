@@ -3,22 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>イベントスケジュール - カレンダー形式</title>
-  
-  <!-- FullCalendarのCSSとJSを読み込む -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
-
+  <title>イベントスケジュール</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    #calendar {
+    #gantt {
       margin-top: 20px;
-      max-width: 900px;
-      margin: 0 auto;
+      height: 500px;
     }
     button {
       margin-top: 20px;
@@ -28,11 +23,10 @@
   </style>
 </head>
 <body>
-  <h1>イベントスケジュール - カレンダー形式</h1>
+  <h1>イベントスケジュール</h1>
+  <div id="gantt"></div>
   
-  <div id="calendar"></div>
-
-  <button id="copyButton">翌日のタスクをコピー</button>
+  <button id="copyButton">翌日のイベントをコピー</button>
 
   <script>
     // 進捗をタスクの開始日と終了日から計算する関数
@@ -57,36 +51,21 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        // タスクデータをFullCalendar用に変換
-        const events = tasks.map(task => {
-          return {
-            title: task.name,
-            start: task.start,
-            end: task.end,
-            description: task.description || '',
-            progress: calculateProgress(task), // 進捗を含める
-          };
+        // 各タスクの進捗を動的に計算
+        tasks.forEach(task => {
+          task.progress = calculateProgress(task); // タスクの開始日と終了日を元に進捗を更新
         });
 
-        // FullCalendarの初期化
-        $('#calendar').fullCalendar({
-          header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-          },
-          events: events,  // タスクデータをカレンダーに設定
-          editable: false, // イベントを編集できないようにする
-          droppable: false, // ドラッグ＆ドロップを無効化
-          eventRender: function(event, element) {
-            // 必要に応じてイベントのカスタマイズ
-            element.attr('title', event.description); // ツールチップ表示
-          }
+        // ガントチャートの初期化
+        const gantt = new Gantt("#gantt", tasks, {
+          view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
+          date_format: "YYYY-MM-DD",
+          editable: false // スケジュールバーを動かせないようにする
         });
       })
       .catch(error => console.error('Error loading tasks.json:', error));
 
-    // 翌日のタスクをコピーする機能
+    // 進行中のタスクと翌日のタスクを取得してコピーする機能
     document.getElementById("copyButton").addEventListener("click", () => {
       const now = new Date();
       const tomorrow = new Date();
