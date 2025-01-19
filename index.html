@@ -63,11 +63,17 @@
           task.progress = calculateProgress(task); // タスクの開始日と終了日を元に進捗を更新
         });
 
+        // 現在の日付を基準に表示範囲を設定（例：1ヶ月後まで）
+        const endDate = new Date();
+        endDate.setMonth(now.getMonth() + 1); // 1ヶ月後の日付
+
         // ガントチャートの初期化
         const gantt = new Gantt("#gantt", upcomingTasks, {
           view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
           date_format: "YYYY-MM-DD",
-          editable: false // スケジュールバーを動かせないようにする
+          editable: false, // スケジュールバーを動かせないようにする
+          from: now,  // 現在の日付から表示を開始
+          to: endDate // 1ヶ月後まで表示
         });
       })
       .catch(error => console.error('Error loading tasks.json:', error));
