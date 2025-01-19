@@ -57,6 +57,30 @@
   <script>
     let allTasks = []; // すべてのタスクデータを保持
 
+    // 繰り返しイベントを計算する関数
+    const calculateRecurringTasks = (task) => {
+      const recurringTasks = [];
+      const startDate = new Date(task.start);
+      const endDate = new Date(task.end);
+      const repeatInterval = task.repeat_interval; // 繰り返し間隔（日）
+      const maxOccurrences = task.max_occurrences; // 繰り返し回数
+
+      for (let i = 0; i < maxOccurrences; i++) {
+        const nextStartDate = new Date(startDate);
+        nextStartDate.setDate(startDate.getDate() + repeatInterval * i);
+        
+        if (nextStartDate > endDate) break; // 最後の繰り返しが終了日を超えたら終了
+        
+        recurringTasks.push({
+          ...task,
+          start: nextStartDate.toISOString(),
+          end: new Date(nextStartDate.getTime() + (endDate - startDate)).toISOString()
+        });
+      }
+
+      return recurringTasks;
+    };
+
     // 進捗をタスクの開始日と終了日から計算する関数
     const calculateProgress = (task) => {
       const now = new Date();
@@ -95,10 +119,14 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        allTasks = tasks.map(task => ({
-          ...task,
-          progress: calculateProgress(task)
-        }));
+        allTasks = [];
+        tasks.forEach(task => {
+          const recurringTasks = calculateRecurringTasks(task);
+          allTasks.push(...recurringTasks.map(task => ({
+            ...task,
+            progress: calculateProgress(task)
+          })));
+        });
         updateGantt(false); // 初期表示では終了したイベントを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
