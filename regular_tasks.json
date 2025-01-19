@@ -1,20 +1,11 @@
 [
-  {
-    "name": "デイリーメンテナンス",
-    "start": "2025-01-01",  
+ {
+    "id": "Task 1",
+    "name": "熊狩り 1",
+    "start": "2025-01-21",
     "end": null,  // 終了日なし
+    "progress": 0,
     "interval": 1
+   "dependencies": ""
   },
-  {
-    "name": "週次報告書作成",
-    "start": "2025-01-01",  
-    "end": null,  // 終了日なし
-    "interval": 7
-  },
-  {
-    "name": "月次会議",
-    "start": "2025-01-01",  
-    "end": null,  // 終了日なし
-    "interval": 30
-  }
 ]
