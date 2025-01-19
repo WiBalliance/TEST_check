@@ -15,14 +15,13 @@
       margin-top: 20px;
       height: 500px;
     }
-    button {
-      margin-top: 10px;
+    button, label {
+      margin-right: 10px;
       padding: 10px;
       font-size: 16px;
     }
     .top-buttons {
       display: flex;
-      justify-content: flex-start;
       align-items: center;
       margin-bottom: 20px;
     }
@@ -31,91 +30,83 @@
 <body>
   <div class="top-buttons">
     <button id="copyButton">翌日のイベントをコピー</button>
+    <label>
+      <input type="checkbox" id="showCompleted" />
+      終了したタスクを表示
+    </label>
   </div>
   <h1>イベントスケジュール</h1>
   <div id="gantt"></div>
 
   <script>
+    let allTasks = []; // すべてのタスクデータを保持
+
     // 進捗をタスクの開始日と終了日から計算する関数
     const calculateProgress = (task) => {
       const now = new Date();
       const start = new Date(task.start);
       const end = new Date(task.end);
-      
-      // タスクの総期間（ミリ秒）
       const totalDuration = end - start;
-      
-      // 現在の日付からタスクの開始日までの経過時間（ミリ秒）
       const elapsedTime = now - start;
 
-      // 経過時間に基づいて進捗をパーセンテージで計算
       if (elapsedTime < 0) return 0; // タスクがまだ開始されていない場合
       if (elapsedTime > totalDuration) return 100; // タスクが完了した場合
       return (elapsedTime / totalDuration) * 100;
+    };
+
+    // ガントチャートを更新する関数
+    const updateGantt = (showCompleted) => {
+      const now = new Date();
+      const filteredTasks = allTasks.filter(task => {
+        const end = new Date(task.end);
+        return showCompleted || end > now; // 終了したタスクを表示するかどうか
+      });
+
+      const gantt = new Gantt("#gantt", filteredTasks, {
+        view_mode: "Day",
+        date_format: "YYYY-MM-DD",
+        editable: false
+      });
     };
 
     // JSONファイルからタスクデータを読み込む
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        const now = new Date();
-
-        // 終了日が現在よりも後のタスクのみ表示
-        const activeTasks = tasks.filter(task => new Date(task.end) > now);
-
-        // 各タスクの進捗を動的に計算
-        activeTasks.forEach(task => {
-          task.progress = calculateProgress(task);
-        });
-
-        // ガントチャートの初期化
-        const gantt = new Gantt("#gantt", activeTasks, {
-          view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
-          date_format: "YYYY-MM-DD",
-          editable: false // スケジュールバーを動かせないようにする
-        });
+        allTasks = tasks.map(task => ({
+          ...task,
+          progress: calculateProgress(task)
+        }));
+        updateGantt(false); // 初期表示では終了したタスクを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
+
+    // チェックボックスのイベントリスナー
+    document.getElementById("showCompleted").addEventListener("change", (event) => {
+      updateGantt(event.target.checked);
+    });
 
     // 翌日のタスクを取得してコピーする機能
     document.getElementById("copyButton").addEventListener("click", () => {
       const now = new Date();
       const tomorrow = new Date();
-      tomorrow.setDate(now.getDate() + 1); // 翌日の日付を設定
+      tomorrow.setDate(now.getDate() + 1);
 
-      fetch('tasks.json')
-        .then(response => response.json())
-        .then(tasks => {
-          const tomorrowTasks = tasks.filter(task => {
-            const start = new Date(task.start);
-            const end = new Date(task.end);
-            return start <= tomorrow && end >= tomorrow; // 翌日に該当するタスク
-          });
+      const tomorrowTasks = allTasks.filter(task => {
+        const start = new Date(task.start);
+        const end = new Date(task.end);
+        return start <= tomorrow && end >= tomorrow;
+      });
 
-          const tasksToCopy = {
-            tomorrowTasks: tomorrowTasks.map(task => task.name)
-          };
+      const tasksToCopy = tomorrowTasks.map(task => task.name).join('\n');
+      const textArea = document.createElement("textarea");
+      textArea.value = `翌日のタスク:\n${tasksToCopy}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
 
-          const textToCopy = `翌日のタスク: \n${tasksToCopy.tomorrowTasks.join('\n')}`;
-
-          // クリップボードにコピー (document.execCommandを利用)
-          const textArea = document.createElement("textarea");
-          textArea.value = textToCopy;
-          document.body.appendChild(textArea);
-          textArea.select();
-          const successful = document.execCommand('copy');
-          document.body.removeChild(textArea);
-
-          if (successful) {
-            alert("翌日のタスクをコピーしました！");
-          } else {
-            alert("コピーに失敗しました。手動でコピーしてください。");
-          }
-        })
-        .catch(error => {
-          console.error('Error loading tasks.json:', error);
-          alert("タスクデータの読み込みに失敗しました。");
-        });
+      alert(successful ? "翌日のタスクをコピーしました！" : "コピーに失敗しました。手動でコピーしてください。");
     });
   </script>
 </body>
