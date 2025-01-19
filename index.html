@@ -22,33 +22,30 @@
     }
     .top-buttons {
       display: flex;
-      align-items: center;
+      flex-direction: column; /* 縦に並べる */
+      align-items: flex-start;
       margin-bottom: 20px;
     }
     .title-container {
       margin-bottom: 20px;
-    }
-    .date-picker-container {
-      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="title-container">
     <h1>イベントスケジュール</h1>
-    <div class="date-picker-container">
-      <label>
-        <input type="date" id="datePicker" />
-      </label>
-      <label>
-        <input type="checkbox" id="showCompleted" />
-        終了したタスクを表示
-      </label>
-    </div>
   </div>
 
   <div class="top-buttons">
+    <label>
+      日付選択:
+      <input type="date" id="datePicker" />
+    </label>
     <button id="copyButton">指定日付のイベントをコピー</button>
+    <label>
+      <input type="checkbox" id="showCompleted" />
+      終了したタスクを表示
+    </label>
   </div>
 
   <div id="gantt"></div>
@@ -125,7 +122,7 @@
 
       const tasksToCopy = targetTasks.map(task => task.name).join('\n');
       const textArea = document.createElement("textarea");
-      textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
+      textArea.value = `${formattedDate}のタスク:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
       textArea.select();
       const successful = document.execCommand('copy');
