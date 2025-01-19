@@ -51,17 +51,13 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        const now = new Date();
-        // 現在の日付以降のタスクのみ表示
-        const futureTasks = tasks.filter(task => new Date(task.start) >= now);
-
         // 各タスクの進捗を動的に計算
-        futureTasks.forEach(task => {
+        tasks.forEach(task => {
           task.progress = calculateProgress(task); // タスクの開始日と終了日を元に進捗を更新
         });
 
         // ガントチャートの初期化
-        const gantt = new Gantt("#gantt", futureTasks, {
+        const gantt = new Gantt("#gantt", tasks, {
           view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
           date_format: "YYYY-MM-DD",
           editable: false // スケジュールバーを動かせないようにする
@@ -84,13 +80,11 @@
             return start <= tomorrow && end >= tomorrow; // 翌日に該当するタスク
           });
 
-          // 翌日のタスクを「x日目」として表示
-          const tasksToCopy = tomorrowTasks.map((task, index) => {
-            const dayDifference = Math.ceil((new Date(task.start) - now) / (1000 * 3600 * 24)) + 1;
-            return `${task.name} (Day ${dayDifference})`;
-          });
+          const tasksToCopy = {
+            tomorrowTasks: tomorrowTasks.map(task => task.name)
+          };
 
-          const textToCopy = `翌日のイベント: \n${tasksToCopy.join('\n')}`;
+          const textToCopy = `翌日のタスク: \n${tasksToCopy.tomorrowTasks.join('\n')}`;
 
           // クリップボードにコピー (document.execCommandを利用)
           const textArea = document.createElement("textarea");
@@ -101,7 +95,7 @@
           document.body.removeChild(textArea);
 
           if (successful) {
-            alert("翌日のイベントをコピーしました！");
+            alert("翌日のタスクをコピーしました！");
           } else {
             alert("コピーに失敗しました。手動でコピーしてください。");
           }
