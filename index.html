@@ -25,20 +25,32 @@
       align-items: center;
       margin-bottom: 20px;
     }
+    .title-container {
+      margin-bottom: 20px;
+    }
+    .date-picker-container {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
+  <div class="title-container">
+    <h1>イベントスケジュール</h1>
+    <div class="date-picker-container">
+      <label>
+        <input type="date" id="datePicker" />
+      </label>
+      <label>
+        <input type="checkbox" id="showCompleted" />
+        終了したタスクを表示
+      </label>
+    </div>
+  </div>
+
   <div class="top-buttons">
     <button id="copyButton">指定日付のイベントをコピー</button>
-    <label>
-      <input type="date" id="datePicker" />
-    </label>
-    <label>
-      <input type="checkbox" id="showCompleted" />
-      終了したタスクを表示
-    </label>
   </div>
-  <h1>イベントスケジュール</h1>
+
   <div id="gantt"></div>
 
   <script>
