@@ -118,5 +118,7 @@
     "end": "2025-01-22 21:30",
     "progress": 0,
     "dependencies": ""
+    "repeat_interval": 2,  // 2日おき
+    "max_occurrences": 10  // 最大10回繰り返し
   }
 ]
