@@ -56,6 +56,7 @@
 
   <script>
     let allTasks = []; // すべてのタスクデータを保持
+    let ganttInstance = null; // ガントチャートのインスタンス
 
     // 繰り返しイベントを計算する関数
     const calculateRecurringTasks = (task) => {
@@ -107,8 +108,13 @@
     
         return (showCompleted || endDate >= now) && matchesName;
       });
-    
-      const gantt = new Gantt("#gantt", filteredTasks, {
+
+      if (ganttInstance) {
+        ganttInstance.clear(); // 古いガントチャートを削除
+      }
+
+      // 新しいインスタンスを作成
+      ganttInstance = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD", // 日付の表示形式
         editable: false
