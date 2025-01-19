@@ -24,6 +24,14 @@
     "dependencies": ""
   },
   {
+    "id": "Task 6",
+    "name": "同盟総動員",
+    "start": "2025-01-13",
+    "end": "2025-01-19",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
     "id": "Task 4",
     "name": "軍備競技",
     "start": "2025-01-20",
