@@ -16,17 +16,24 @@
       height: 500px;
     }
     button {
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 10px;
       font-size: 16px;
+    }
+    .top-buttons {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
+  <div class="top-buttons">
+    <button id="copyButton">翌日のイベントをコピー</button>
+  </div>
   <h1>イベントスケジュール</h1>
   <div id="gantt"></div>
-  
-  <button id="copyButton">翌日のイベントをコピー</button>
 
   <script>
     // 進捗をタスクの開始日と終了日から計算する関数
