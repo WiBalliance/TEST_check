@@ -85,7 +85,7 @@
     "start": "2025-01-23",
     "end": "2025-01-23",
     "progress": 0,
-    "dependencies": "Task 9-2"
+    "dependencies": "Task 9-1"
   },
   {
     "id": "Task 10",
