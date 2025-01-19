@@ -25,6 +25,21 @@
       align-items: center;
       margin-bottom: 20px;
     }
+    .gantt .bar-wrapper.day-start {
+      border-left: 2px solid #000; /* 月の変わり目を太くする線 */
+    }
+    .gantt .day-header {
+      display: flex;
+      flex-direction: column;
+    }
+    .day-header .day-date {
+      font-size: 12px;
+      color: #333;
+    }
+    .day-header .day-weekday {
+      font-size: 10px;
+      color: #777;
+    }
   </style>
 </head>
 <body>
@@ -40,6 +55,9 @@
 
   <script>
     let allTasks = []; // すべてのタスクデータを保持
+
+    // 曜日リスト
+    const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
     // 進捗をタスクの開始日と終了日から計算する関数
     const calculateProgress = (task) => {
@@ -62,10 +80,40 @@
         return showCompleted || end > now; // 終了したタスクを表示するかどうか
       });
 
+      // ガントチャートの初期化
       const gantt = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD",
-        editable: false
+        custom_popup_html: null,
+        on_render: () => {
+          // 曜日を追加
+          document.querySelectorAll(".gantt .header .day").forEach(day => {
+            const dayDate = new Date(day.dataset.date);
+            const weekday = weekdays[dayDate.getDay()];
+            const weekdaySpan = document.createElement("span");
+            weekdaySpan.className = "day-weekday";
+            weekdaySpan.textContent = `(${weekday})`;
+
+            const dayDateSpan = document.createElement("span");
+            dayDateSpan.className = "day-date";
+            dayDateSpan.textContent = day.textContent;
+
+            day.textContent = "";
+            day.appendChild(dayDateSpan);
+            day.appendChild(weekdaySpan);
+          });
+
+          // 月の変わり目の線を太くする
+          document.querySelectorAll(".gantt .header .day").forEach((day, index, days) => {
+            if (index > 0) {
+              const currentDate = new Date(day.dataset.date);
+              const prevDate = new Date(days[index - 1].dataset.date);
+              if (currentDate.getMonth() !== prevDate.getMonth()) {
+                day.classList.add("day-start");
+              }
+            }
+          });
+        }
       });
     };
 
