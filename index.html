@@ -125,7 +125,7 @@
 
       const tasksToCopy = targetTasks.map(task => task.name).join('\n');
       const textArea = document.createElement("textarea");
-      textArea.value = `${formattedDate}のタスク:\n${tasksToCopy}`;
+      textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
       textArea.select();
       const successful = document.execCommand('copy');
