@@ -59,7 +59,7 @@
         const upcomingTasks = tasks.filter(task => new Date(task.end) >= yesterday);
 
         // 開始日順にソート
-        upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
+        // upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
 
         // 各タスクの進捗を動的に計算
         upcomingTasks.forEach(task => {
