@@ -56,30 +56,26 @@
 
   <script>
     let allTasks = []; // すべてのタスクデータを保持
-    let ganttInstance = null; // ガントチャートのインスタンス
 
-    // 繰り返しイベントを計算する関数
-    const calculateRecurringTasks = (task) => {
-      const recurringTasks = [];
-      const startDate = new Date(task.start);
-      const endDate = new Date(task.end);
-      const repeatInterval = task.repeat_interval; // 繰り返し間隔（日）
-      const maxOccurrences = task.max_occurrences; // 繰り返し回数
+    // イベントファイルのリスト
+    const eventFiles = ['tasks.json', 'regular_tasks.json']; // 必要な .json ファイルをリストで指定
 
-      for (let i = 0; i < maxOccurrences; i++) {
-        const nextStartDate = new Date(startDate);
-        nextStartDate.setDate(startDate.getDate() + repeatInterval * i);
-        
-        if (nextStartDate > endDate) break; // 最後の繰り返しが終了日を超えたら終了
-        
-        recurringTasks.push({
-          ...task,
-          start: nextStartDate.toISOString(),
-          end: new Date(nextStartDate.getTime() + (endDate - startDate)).toISOString()
-        });
-      }
-
-      return recurringTasks;
+    // イベントデータを読み込む関数
+    const loadEvents = () => {
+      allTasks = []; // すべてのタスクデータをリセット
+      Promise.all(eventFiles.map(file =>
+        fetch(file)
+          .then(response => response.json())
+          .then(tasks => {
+            // 各ファイルのタスクをまとめる
+            allTasks = allTasks.concat(tasks);
+          })
+          .catch(error => console.error('Error loading event file:', error))
+      ))
+      .then(() => {
+        // すべてのファイルが読み込まれた後、ガントチャートを更新
+        updateGantt(false); // 初期表示では終了したイベントを非表示にする
+      });
     };
 
     // 進捗をタスクの開始日と終了日から計算する関数
@@ -109,36 +105,12 @@
         return (showCompleted || endDate >= now) && matchesName;
       });
 
-      if (ganttInstance) {
-        ganttInstance.clear(); // 古いガントチャートを削除
-      }
-
-      // 新しいインスタンスを作成
-      ganttInstance = new Gantt("#gantt", filteredTasks, {
+      const gantt = new Gantt("#gantt", filteredTasks, {
         view_mode: "Day",
         date_format: "YYYY-MM-DD", // 日付の表示形式
         editable: false
       });
     };
-
-    // JSONファイルからイベントデータを読み込む
-    fetch('tasks.json')
-      .then(response => response.json())
-      .then(tasks => {
-        // 繰り返しイベントの計算を追加
-        const tasksWithRecurring = tasks.flatMap(task => {
-          const recurringTasks = task.repeat_interval ? calculateRecurringTasks(task) : [];
-          return [task, ...recurringTasks]; // 元のタスクと繰り返しタスクを統合
-        });
-        
-        allTasks = tasksWithRecurring.map(task => ({
-          ...task,
-          progress: calculateProgress(task)
-        }));
-        
-        updateGantt(false); // 初期表示では終了したイベントを非表示にする
-      })
-      .catch(error => console.error('Error loading tasks.json:', error));
 
     // チェックボックスのイベントリスナー
     document.getElementById("showCompleted").addEventListener("change", (event) => {
@@ -202,6 +174,9 @@
     
       alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
     });
+
+    // 初期データの読み込み
+    loadEvents(); // ページ読み込み時にイベントファイルを読み込み
   </script>
 </body>
 </html>
