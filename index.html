@@ -51,13 +51,18 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
+        const now = new Date();
+
+        // 終了日が現在よりも後のタスクのみ表示
+        const activeTasks = tasks.filter(task => new Date(task.end) > now);
+
         // 各タスクの進捗を動的に計算
-        tasks.forEach(task => {
-          task.progress = calculateProgress(task); // タスクの開始日と終了日を元に進捗を更新
+        activeTasks.forEach(task => {
+          task.progress = calculateProgress(task);
         });
 
         // ガントチャートの初期化
-        const gantt = new Gantt("#gantt", tasks, {
+        const gantt = new Gantt("#gantt", activeTasks, {
           view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
           date_format: "YYYY-MM-DD",
           editable: false // スケジュールバーを動かせないようにする
@@ -65,7 +70,7 @@
       })
       .catch(error => console.error('Error loading tasks.json:', error));
 
-    // 進行中のタスクと翌日のタスクを取得してコピーする機能
+    // 翌日のタスクを取得してコピーする機能
     document.getElementById("copyButton").addEventListener("click", () => {
       const now = new Date();
       const tomorrow = new Date();
