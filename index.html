@@ -25,23 +25,22 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .gantt .bar-wrapper.day-start-month {
-      border-left: 3px solid black; /* 月の変わり目を黒い太線に */
+    .day-header {
+      position: relative;
     }
-    .gantt .bar-wrapper.day-start-week {
-      border-left: 1px solid orange; /* 週の変わり目を薄いオレンジ線に */
+    .day-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      background: transparent;
     }
-    .gantt .day-header {
-      display: flex;
-      flex-direction: column;
+    .day-line.month-line {
+      background: black; /* 月の変わり目の線 */
     }
-    .day-header .day-date {
-      font-size: 12px;
-      color: #333;
-    }
-    .day-header .day-weekday {
-      font-size: 10px;
-      color: #777;
+    .day-line.week-line {
+      background: orange; /* 週の変わり目の線 */
     }
   </style>
 </head>
@@ -58,9 +57,6 @@
 
   <script>
     let allTasks = []; // すべてのタスクデータを保持
-
-    // 曜日リスト
-    const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
     // 進捗をタスクの開始日と終了日から計算する関数
     const calculateProgress = (task) => {
@@ -89,38 +85,25 @@
         date_format: "YYYY-MM-DD",
         custom_popup_html: null,
         on_render: () => {
-          // 曜日を追加
-          document.querySelectorAll(".gantt .header .day").forEach(day => {
-            const dayDate = new Date(day.dataset.date);
-            const weekday = weekdays[dayDate.getDay()];
-            const weekdaySpan = document.createElement("span");
-            weekdaySpan.className = "day-weekday";
-            weekdaySpan.textContent = `(${weekday})`;
+          const days = document.querySelectorAll(".gantt .header .day");
+          days.forEach((day, index) => {
+            const currentDate = new Date(day.dataset.date);
 
-            const dayDateSpan = document.createElement("span");
-            dayDateSpan.className = "day-date";
-            dayDateSpan.textContent = day.textContent;
-
-            day.textContent = "";
-            day.appendChild(dayDateSpan);
-            day.appendChild(weekdaySpan);
-          });
-
-          // 月と週の変わり目の線を追加
-          document.querySelectorAll(".gantt .header .day").forEach((day, index, days) => {
+            // 月の変わり目
             if (index > 0) {
-              const currentDate = new Date(day.dataset.date);
               const prevDate = new Date(days[index - 1].dataset.date);
-
-              // 月の変わり目
               if (currentDate.getMonth() !== prevDate.getMonth()) {
-                day.classList.add("day-start-month");
+                const line = document.createElement("div");
+                line.className = "day-line month-line";
+                day.appendChild(line);
               }
+            }
 
-              // 週の変わり目 (日曜日が週の始まり)
-              if (currentDate.getDay() === 0) {
-                day.classList.add("day-start-week");
-              }
+            // 週の変わり目
+            if (currentDate.getDay() === 0) { // 日曜日
+              const line = document.createElement("div");
+              line.className = "day-line week-line";
+              day.appendChild(line);
             }
           });
         }
