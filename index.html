@@ -22,7 +22,7 @@
     }
     .top-buttons {
       display: flex;
-      flex-direction: column; /* 縦に並べる */
+      flex-direction: column;
       align-items: flex-start;
       margin-bottom: 20px;
     }
@@ -75,8 +75,10 @@
     const generateRegularTasks = (regularTask) => {
       const tasks = [];
       const startDate = new Date(regularTask.start);
-      const endDate = new Date(regularTask.end);
       const interval = regularTask.interval; // 毎日の場合、1、毎週の場合は7など
+
+      // 終了日が無い場合は現在から1ヶ月後を設定
+      const endDate = regularTask.end ? new Date(regularTask.end) : new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
       let currentStart = startDate;
       while (currentStart <= endDate) {
@@ -132,7 +134,7 @@
         tasks.forEach(task => {
           regularTasks = [...regularTasks, ...generateRegularTasks(task)];
         });
-        updateGantt(false); // 定期的なタスクを含めて初期表示
+        updateGantt(false); // 定期タスクを含めて初期表示
       })
       .catch(error => console.error('Error loading regular_tasks.json:', error));
 
