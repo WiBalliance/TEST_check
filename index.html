@@ -119,14 +119,10 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        allTasks = [];
-        tasks.forEach(task => {
-          const recurringTasks = calculateRecurringTasks(task);
-          allTasks.push(...recurringTasks.map(task => ({
-            ...task,
-            progress: calculateProgress(task)
-          })));
-        });
+        allTasks = tasks.map(task => ({
+          ...task,
+          progress: calculateProgress(task)
+        }));
         updateGantt(false); // 初期表示では終了したイベントを非表示にする
       })
       .catch(error => console.error('Error loading tasks.json:', error));
