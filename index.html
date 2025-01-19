@@ -57,7 +57,7 @@
   <script>
     let allTasks = []; // すべてのタスクデータを保持
 
-    // 進捗をタスクの開始日と終了日から計算する関数
+    // 進捗をタスクの開始日と終了日から計算する関数.
     const calculateProgress = (task) => {
       const now = new Date();
       const start = new Date(task.start);
@@ -94,8 +94,24 @@
     // 複数のJSONファイルを読み込む関数
     const loadTasks = async () => {
       const taskFiles = [
-        'tasks.json',
-        'regular_tasks.json'
+        // 終了イベント
+        'tasks_old.json',
+        // 
+        'tasks_turi.json',
+        // 超得イベント
+        'tasks_setugenboueki.json',
+        // 通常イベント
+        'tasks_hyougennsihaisya.json',
+        'tasks_gunbi.json',
+        'tasks_doumeisoudouin.json',
+        'tasks_heiki.json',
+        'tasks_doumeisouha.json',
+        'tasks_kyoukoku.json',
+        'tasks_toride.json',
+        'tasks_sikannkeikaku.json',
+        'tasks_jina.json',
+        'tasks_kuma1.json'
+        //'tasks_kuma2.json'  //未設置
       ];
 
       try {
