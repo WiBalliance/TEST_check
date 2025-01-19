@@ -25,22 +25,13 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .day-header {
-      position: relative;
+    .month-line {
+      stroke: black;
+      stroke-width: 2px;
     }
-    .day-line {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 2px;
-      background: transparent;
-    }
-    .day-line.month-line {
-      background: black; /* 月の変わり目の線 */
-    }
-    .day-line.week-line {
-      background: orange; /* 週の変わり目の線 */
+    .week-line {
+      stroke: orange;
+      stroke-width: 1px;
     }
   </style>
 </head>
@@ -71,6 +62,40 @@
       return (elapsedTime / totalDuration) * 100;
     };
 
+    // ガントチャートにカスタム線を追加する関数
+    const addCustomLines = () => {
+      const svg = document.querySelector('.gantt .grid .grid-row');
+      if (!svg) return;
+
+      const allDays = document.querySelectorAll('.gantt .grid .grid-row .grid-cell');
+      allDays.forEach((day, index) => {
+        const date = new Date(day.dataset.date);
+        const nextDate = index + 1 < allDays.length ? new Date(allDays[index + 1].dataset.date) : null;
+
+        // 月の変わり目
+        if (nextDate && date.getMonth() !== nextDate.getMonth()) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", day.getBoundingClientRect().right);
+          line.setAttribute("x2", day.getBoundingClientRect().right);
+          line.setAttribute("y1", 0);
+          line.setAttribute("y2", 500);
+          line.classList.add("month-line");
+          svg.appendChild(line);
+        }
+
+        // 週の変わり目
+        if (date.getDay() === 0) { // 日曜日の場合
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", day.getBoundingClientRect().right);
+          line.setAttribute("x2", day.getBoundingClientRect().right);
+          line.setAttribute("y1", 0);
+          line.setAttribute("y2", 500);
+          line.classList.add("week-line");
+          svg.appendChild(line);
+        }
+      });
+    };
+
     // ガントチャートを更新する関数
     const updateGantt = (showCompleted) => {
       const now = new Date();
@@ -85,27 +110,7 @@
         date_format: "YYYY-MM-DD",
         custom_popup_html: null,
         on_render: () => {
-          const days = document.querySelectorAll(".gantt .header .day");
-          days.forEach((day, index) => {
-            const currentDate = new Date(day.dataset.date);
-
-            // 月の変わり目
-            if (index > 0) {
-              const prevDate = new Date(days[index - 1].dataset.date);
-              if (currentDate.getMonth() !== prevDate.getMonth()) {
-                const line = document.createElement("div");
-                line.className = "day-line month-line";
-                day.appendChild(line);
-              }
-            }
-
-            // 週の変わり目
-            if (currentDate.getDay() === 0) { // 日曜日
-              const line = document.createElement("div");
-              line.className = "day-line week-line";
-              day.appendChild(line);
-            }
-          });
+          addCustomLines();
         }
       });
     };
