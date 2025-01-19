@@ -109,6 +109,11 @@
       const targetDate = new Date(selectedDate);
       const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
 
+      // 経過日数を計算
+      const today = new Date();
+      const diffTime = targetDate - today;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 経過日数
+
       const targetTasks = allTasks.filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
@@ -120,7 +125,7 @@
         return;
       }
 
-      const tasksToCopy = targetTasks.map(task => task.name).join('\n');
+      const tasksToCopy = targetTasks.map(task => `${task.name} (${diffDays}日目)`).join('\n');
       const textArea = document.createElement("textarea");
       textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
