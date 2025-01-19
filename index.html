@@ -135,7 +135,10 @@
       const targetTasks = allTasks.filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
-        return start <= targetDate && end >= targetDate;
+      
+        // タスクがターゲット日付と重なるか、ターゲット日付に関連している場合
+        return (start <= targetDate && end >= targetDate) || 
+               (start <= targetDate && end >= targetDate.setHours(23, 59, 59, 999));
       });
     
       if (targetTasks.length === 0) {
