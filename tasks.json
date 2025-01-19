@@ -1,0 +1,58 @@
+[
+  {
+    "id": "Task 1",
+    "name": "プロジェクト計画",
+    "start": "2025-01-02",
+    "end": "2025-01-05",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "Task 2",
+    "name": "要件定義",
+    "start": "2025-01-06",
+    "end": "2025-02-05",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "Task 3",
+    "name": "設計",
+    "start": "2025-02-06",
+    "end": "2025-02-15",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "Task 4",
+    "name": "プロジェクト計画1",
+    "start": "2025-01-02",
+    "end": "2025-02-05",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "Task 5",
+    "name": "プロジェクト計画2",
+    "start": "2025-01-02",
+    "end": "2025-02-05",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "Task 6",
+    "name": "プロジェクト計画3",
+    "start": "2025-01-02",
+    "end": "2025-02-05",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "Task 7",
+    "name": "プロジェクト計画4",
+    "start": "2025-01-02",
+    "end": "2025-02-05",
+    "progress": 0,
+    "dependencies": ""
+  }
+]
