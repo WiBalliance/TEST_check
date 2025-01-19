@@ -25,8 +25,11 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .gantt .bar-wrapper.day-start {
-      border-left: 2px solid #000; /* 月の変わり目を太くする線 */
+    .gantt .bar-wrapper.day-start-month {
+      border-left: 3px solid black; /* 月の変わり目を黒い太線に */
+    }
+    .gantt .bar-wrapper.day-start-week {
+      border-left: 1px solid orange; /* 週の変わり目を薄いオレンジ線に */
     }
     .gantt .day-header {
       display: flex;
@@ -103,13 +106,20 @@
             day.appendChild(weekdaySpan);
           });
 
-          // 月の変わり目の線を太くする
+          // 月と週の変わり目の線を追加
           document.querySelectorAll(".gantt .header .day").forEach((day, index, days) => {
             if (index > 0) {
               const currentDate = new Date(day.dataset.date);
               const prevDate = new Date(days[index - 1].dataset.date);
+
+              // 月の変わり目
               if (currentDate.getMonth() !== prevDate.getMonth()) {
-                day.classList.add("day-start");
+                day.classList.add("day-start-month");
+              }
+
+              // 週の変わり目 (日曜日が週の始まり)
+              if (currentDate.getDay() === 0) {
+                day.classList.add("day-start-week");
               }
             }
           });
