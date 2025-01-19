@@ -52,8 +52,11 @@
       .then(response => response.json())
       .then(tasks => {
         const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1); // 前日の日付を設定
+
         // 終了日が現在の日付よりも後または今日のタスクのみ表示
-        const upcomingTasks = tasks.filter(task => new Date(task.end) >= now);
+        const upcomingTasks = tasks.filter(task => new Date(task.end) >= yesterday);
 
         // 開始日順にソート
         upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
@@ -72,7 +75,7 @@
           view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
           date_format: "YYYY-MM-DD",
           editable: false, // スケジュールバーを動かせないようにする
-          from: now,  // 現在の日付から表示を開始
+          from: yesterday,  // 前日の日付から表示を開始
           to: endDate // 1ヶ月後まで表示
         });
       })
@@ -96,7 +99,7 @@
           // タスク名とn日目を取得
           const tasksToCopy = tomorrowTasks.map(task => {
             const startDate = new Date(task.start);
-            const daysFromStart = Math.ceil((now - startDate) / (1000 * 3600 * 24)); // 今日からの経過日数を計算
+            const daysFromStart = Math.ceil(((now - startDate) / (1000 * 3600 * 24))+1); // 今日からの経過日数を計算
             return `${task.name}（${daysFromStart}日目）`;
           });
 
