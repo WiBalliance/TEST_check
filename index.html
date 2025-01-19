@@ -39,7 +39,7 @@
       const totalDuration = end - start;
       
       // 現在の日付からタスクの開始日までの経過時間（ミリ秒）
-      // const elapsedTime = now - start;
+      const elapsedTime = now - start;
 
       // 経過時間に基づいて進捗をパーセンテージで計算
       if (elapsedTime < 0) return 0; // タスクがまだ開始されていない場合
@@ -51,29 +51,16 @@
     fetch('tasks.json')
       .then(response => response.json())
       .then(tasks => {
-        const now = new Date();
-        // 終了日が現在の日付よりも後または今日のタスクのみ表示
-        const upcomingTasks = tasks.filter(task => new Date(task.end) >= now);
-
-        // 開始日順にソート
-        upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
-
         // 各タスクの進捗を動的に計算
-        upcomingTasks.forEach(task => {
+        tasks.forEach(task => {
           task.progress = calculateProgress(task); // タスクの開始日と終了日を元に進捗を更新
         });
 
-        // 現在の日付を基準に表示範囲を設定（例：1ヶ月後まで）
-        const endDate = new Date();
-        endDate.setMonth(now.getMonth() + 1); // 1ヶ月後の日付
-
         // ガントチャートの初期化
-        const gantt = new Gantt("#gantt", upcomingTasks, {
+        const gantt = new Gantt("#gantt", tasks, {
           view_mode: "Day", // 表示モード ("Quarter Day", "Day", "Week", "Month")
           date_format: "YYYY-MM-DD",
-          editable: false, // スケジュールバーを動かせないようにする
-          from: now,  // 現在の日付から表示を開始
-          to: endDate // 1ヶ月後まで表示
+          editable: false // スケジュールバーを動かせないようにする
         });
       })
       .catch(error => console.error('Error loading tasks.json:', error));
@@ -93,14 +80,11 @@
             return start <= tomorrow && end >= tomorrow; // 翌日に該当するタスク
           });
 
-          // タスク名とn日目を取得
-          const tasksToCopy = tomorrowTasks.map(task => {
-            const startDate = new Date(task.start);
-            const daysFromStart = Math.ceil((now - startDate) / (1000 * 3600 * 24)); // 今日からの経過日数を計算
-            return `${task.name}（${daysFromStart}日目）`;
-          });
+          const tasksToCopy = {
+            tomorrowTasks: tomorrowTasks.map(task => task.name)
+          };
 
-          const textToCopy = `翌日のタスク: \n${tasksToCopy.join('\n')}`;
+          const textToCopy = `翌日のタスク: \n${tasksToCopy.tomorrowTasks.join('\n')}`;
 
           // クリップボードにコピー (document.execCommandを利用)
           const textArea = document.createElement("textarea");
