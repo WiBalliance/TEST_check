@@ -55,6 +55,9 @@
         // 終了日が現在の日付よりも後または今日のタスクのみ表示
         const upcomingTasks = tasks.filter(task => new Date(task.end) >= now);
 
+        // 開始日順にソート
+        upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
+
         // 各タスクの進捗を動的に計算
         upcomingTasks.forEach(task => {
           task.progress = calculateProgress(task); // タスクの開始日と終了日を元に進捗を更新
