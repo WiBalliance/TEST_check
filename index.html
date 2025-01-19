@@ -99,7 +99,7 @@
           // タスク名とn日目を取得
           const tasksToCopy = tomorrowTasks.map(task => {
             const startDate = new Date(task.start);
-            const daysFromStart = Math.ceil(((now - startDate) / (1000 * 3600 * 24))+1); // 今日からの経過日数を計算
+            const daysFromStart = Math.ceil(((now - startDate) / (1000 * 3600 * 24)) +1); // 今日からの経過日数を計算
             return `${task.name}（${daysFromStart}日目）`;
           });
 
