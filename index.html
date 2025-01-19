@@ -137,22 +137,24 @@
       const now = new Date();
       const tomorrow = new Date();
       tomorrow.setDate(now.getDate() + 1);
-
+    
+      const formattedDate = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`; // 翌日のフォーマットされた日付
+    
       const tomorrowTasks = allTasks.filter(task => {
         const start = new Date(task.start);
         const end = new Date(task.end);
         return start <= tomorrow && end >= tomorrow;
       });
-
+    
       const tasksToCopy = tomorrowTasks.map(task => task.name).join('\n');
       const textArea = document.createElement("textarea");
-      textArea.value = `翌日のタスク:\n${tasksToCopy}`;
+      textArea.value = `${formattedDate}のタスク:\n${tasksToCopy}`;
       document.body.appendChild(textArea);
       textArea.select();
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-
-      alert(successful ? "翌日のタスクをコピーしました！" : "コピーに失敗しました。手動でコピーしてください。");
+    
+      alert(successful ? `${formattedDate}のタスクをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
     });
   </script>
 </body>
