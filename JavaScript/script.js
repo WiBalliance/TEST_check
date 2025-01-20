@@ -53,7 +53,7 @@ const loadTasks = async () => {
     "./tasks/tasks_toride.json",             //要塞・砦争奪戦
     "./tasks/tasks_sikannkeikaku.json",      //士官計画
     "./tasks/tasks_jina.json",               //ジーナの復讐
-    //"./tasks/tasks_station.json",            //ST
+    "./tasks/tasks_station.json",            //ST
     "./tasks/tasks_kuma1.json"               //熊罠1
     //"./tasks/tasks_kuma2.json"               //熊罠2  未設置
   ];
