@@ -2,15 +2,18 @@ body {
   font-family: Arial, sans-serif;
   margin: 20px;
 }
+
 #gantt {
   margin-top: 20px;
   height: 500px;
 }
+
 button, label {
   margin-right: 10px;
   padding: 10px;
   font-size: 16px;
 }
+
 .top-buttons {
   display: flex;
   flex-direction: column; /* 縦に並べる */
@@ -18,10 +21,23 @@ button, label {
   margin-bottom: 20px;
 }
 
-.top-buttons label, 
-.top-buttons button {
-  margin-bottom: 10px; /* 各要素間の間隔を設定 */
-}
 .title-container {
   margin-bottom: 20px;
+}
+
+/* 進捗率に応じた色付け */
+.progress-low .bar {
+  fill: #ffcccc; /* 赤 (低進捗) */
+}
+
+.progress-medium .bar {
+  fill: #ffe066; /* 黄色 (中進捗) */
+}
+
+.progress-high .bar {
+  fill: #66ccff; /* 青 (高進捗) */
+}
+
+.progress-complete .bar {
+  fill: #66ff66; /* 緑 (完了) */
 }
