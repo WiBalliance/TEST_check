@@ -17,6 +17,11 @@ button, label {
   align-items: flex-start;
   margin-bottom: 20px;
 }
+
+.top-buttons label, 
+.top-buttons button {
+  margin-bottom: 10px; /* 各要素間の間隔を設定 */
+}
 .title-container {
   margin-bottom: 20px;
 }
