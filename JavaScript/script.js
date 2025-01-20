@@ -19,47 +19,44 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   const filteredTasks = allTasks.filter(task => {
     const end = new Date(task.end);
     const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-  
+
     // 日付部分を比較するため、時刻を無視して YYYY-MM-DD の形式に変換
     const startDate = new Date(task.start.split(' ')[0]); // 時刻を削除して日付だけにする
     const endDate = new Date(task.end.split(' ')[0]); // 時刻を削除して日付だけにする
-  
+
     return (showCompleted || endDate >= now) && matchesName;
   });
-  
+
   const gantt = new Gantt("#gantt", filteredTasks, {
     view_mode: "Day",
     date_format: "YYYY-MM-DD", // 日付の表示形式
-    time_format: "%H:%M", // 24時間形式の時刻表示 (デフォルトは12時間形式)
-    editable: false, // 編集不可
-    draggable: false, // タスクのドラッグ（移動）を無効にする
-    resizable: false, // タスクのサイズ変更を無効にする
+    editable: false
   });
 };
 
 // 複数のJSONファイルを読み込む関数
 const loadTasks = async () => {
   const taskFiles = [
-        // 終了イベント
-        './tasks/tasks_old.json',
-        // 
-        './tasks/tasks_turi.json',
-        // 超得イベント
-        './tasks/tasks_setugenboueki.json',
-        // 通常イベント
-        './tasks/tasks_hyougennsihaisya.json',
-        './tasks/tasks_gunbi.json',
-        './tasks/tasks_doumeisoudouin.json',
-        './tasks/tasks_heiki.json',
-        './tasks/tasks_doumeisouha.json',
-        './tasks/tasks_kyoukoku.json',
-        './tasks/tasks_toride.json',
-        './tasks/tasks_sikannkeikaku.json',
-        './tasks/tasks_jina.json',
-        './tasks/tasks_kuma1.json',
-        //'tasks_kuma2.json',  //未設置
-        './tasks/tasks_station.json'
-      ];
+    // 終了イベント
+    'tasks_old.json',
+    // 
+    'tasks_turi.json',
+    // 超得イベント
+    'tasks_setugenboueki.json',
+    // 通常イベント
+    'tasks_hyougennsihaisya.json',
+    'tasks_gunbi.json',
+    'tasks_doumeisoudouin.json',
+    'tasks_heiki.json',
+    'tasks_doumeisouha.json',
+    'tasks_kyoukoku.json',
+    'tasks_toride.json',
+    'tasks_sikannkeikaku.json',
+    'tasks_jina.json',
+    'tasks_kuma1.json',
+    //'tasks_kuma2.json',  //未設置
+    './tasks/tasks_station.json'
+  ];
 
   try {
     const tasks = await Promise.all(taskFiles.map(file =>
@@ -125,18 +122,18 @@ document.getElementById("copyButton").addEventListener("click", () => {
   // コピー用テキストを作成
   const tasksToCopy = targetTasks.map(task => {
     const taskStartDate = new Date(task.start);
-    const taskStartFormattedTime = ${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}; // 開始時刻の取得
+    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`; // 開始時刻の取得
     const diffTime = targetDate - taskStartDate;
     const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
-    return ${taskStartFormattedTime}~ ${task.name} (${diffDays}日目);  // 時刻 + イベント名 + 開始日からの日数
+    return `${taskStartFormattedTime}~ ${task.name}`;  // 時刻 + イベント名 + 開始日からの日数
   }).join('\n');
 
   const textArea = document.createElement("textarea");
-  textArea.value = ${formattedDate}のイベント:\n${tasksToCopy};
+  textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
   document.body.appendChild(textArea);
   textArea.select();
   const successful = document.execCommand('copy');
   document.body.removeChild(textArea);
 
-  alert(successful ? ${formattedDate}のイベントをコピーしました！ : "コピーに失敗しました。手動でコピーしてください。");
+  alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
 });
