@@ -125,16 +125,18 @@ document.getElementById("copyButton").addEventListener("click", () => {
   // コピー用テキストを作成
   const tasksToCopy = targetTasks.map(task => {
     const taskStartDate = new Date(task.start);
-    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`; // 開始時刻の取得
-    return `${taskStartFormattedTime}~ ${task.name} `;  // 時刻 + イベント名
+    const taskStartFormattedTime = ${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}; // 開始時刻の取得
+    const diffTime = targetDate - taskStartDate;
+    const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
+    return ${taskStartFormattedTime}~ ${task.name} (${diffDays}日目);  // 時刻 + イベント名 + 開始日からの日数
   }).join('\n');
 
   const textArea = document.createElement("textarea");
-  textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
+  textArea.value = ${formattedDate}のイベント:\n${tasksToCopy};
   document.body.appendChild(textArea);
   textArea.select();
   const successful = document.execCommand('copy');
   document.body.removeChild(textArea);
 
-  alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
+  alert(successful ? ${formattedDate}のイベントをコピーしました！ : "コピーに失敗しました。手動でコピーしてください。");
 });
