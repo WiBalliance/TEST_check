@@ -21,16 +21,14 @@ const updateGantt = (showCompleted, nameFilter = '') => {
     const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
   
     // 日付部分を比較するため、時刻を無視して YYYY-MM-DD の形式に変換
-    const startDate = new Date(task.start.split('_')[0]); // 時刻を削除して日付だけにする
-    const endDate = new Date(task.end.split('_')[0]); // 時刻を削除して日付だけにする
+    const startDate = new Date(task.start.split(' ')[0]); // 時刻を削除して日付だけにする
+    const endDate = new Date(task.end.split(' ')[0]); // 時刻を削除して日付だけにする
   
     return (showCompleted || endDate >= now) && matchesName;
   });
   
   const gantt = new Gantt("#gantt", filteredTasks, {
     view_mode: "Day",
-    scale_unit: "minute", // 時間単位で表示
-    step: 15, // 15分単位で表示
     date_format: "YYYY-MM-DD", // 日付の表示形式
     time_format: "%H:%M", // 24時間形式の時刻表示 (デフォルトは12時間形式)
     editable: false, // 編集不可
