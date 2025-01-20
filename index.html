@@ -12,8 +12,12 @@
       background-color: #f4f4f4;
     }
     .container {
-      text-align: center;
-      padding: 50px;
+      display: flex; /* フレックスボックスを使用 */
+      flex-direction: column; /* 縦に並べる */
+      align-items: center; /* 水平方向に中央揃え */
+      justify-content: center; /* 垂直方向に中央揃え */
+      height: 100vh; /* ビューポートの高さに合わせる */
+      padding: 20px;
     }
     h1 {
       font-size: 36px;
@@ -29,7 +33,9 @@
       text-decoration: none;
       border-radius: 5px;
       margin-top: 20px;
-      display: inline-block;
+      display: block; /* ボタンをブロック要素にして縦に並べる */
+      width: 100%; /* ボタンの幅を100%に */
+      max-width: 300px; /* 最大幅を設定 */
     }
     .button:hover {
       background-color: #45a049;
