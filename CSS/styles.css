@@ -8,18 +8,24 @@ body {
   height: 500px;
 }
 
-button, label {
-  margin-right: 10px;
-  padding: 10px;
-  font-size: 16px;
-}
-
 .top-buttons {
   display: flex;
   flex-direction: column; /* 縦に並べる */
-  align-items: flex-start;
+  align-items: flex-start; /* 左寄せにする */
   margin-bottom: 20px;
   gap: 10px; /* 要素間にスペースを追加 */
+  width: 300px; /* 幅を制限して整理 */
+}
+
+label {
+  display: block; /* ラベルをブロック要素にして、縦に並べる */
+  margin-bottom: 10px; /* ラベル間のスペースを確保 */
+}
+
+button {
+  margin-top: 10px; /* ボタン間にスペースを追加 */
+  padding: 10px 20px; /* ボタンの内側に余白を追加 */
+  font-size: 16px;
 }
 
 .title-container {

@@ -48,9 +48,9 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 
   // ガントチャートを描画
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Hour", // 時間単位表示
-    date_format: "YYYY-MM-DD HH:mm", // 日付＋時間表示
-    editable: false, // 編集不可
+    view_mode: "Day", // 時間単位表示
+    date_format: "YYYY-MM-DD", // 日付＋時間表示
+    editable: false // 編集不可
   });
 };
 
