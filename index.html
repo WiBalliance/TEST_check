@@ -3,82 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>イベントスケジュール</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.css">
+  <title>トップページ</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
     }
-    #gantt {
+    .container {
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 36px;
+      color: #333;
+    }
+    .button {
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      padding: 15px 30px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      border-radius: 5px;
       margin-top: 20px;
-      height: 500px;
+      display: inline-block;
     }
-    .top-buttons {
-      display: flex;
-      flex-direction: column; /* 縦に並べる */
-      align-items: flex-start; /* 左寄せにする */
-      margin-bottom: 20px;
-      gap: 10px; /* 要素間にスペースを追加 */
-      width: 100%; /* 幅を100%にして、親要素に合わせる */
-    }
-    label {
-      display: block; /* ラベルをブロック要素にして縦に並べる */
-      margin-bottom: 10px; /* ラベル間のスペースを確保 */
-      font-size: 16px; /* フォントサイズの調整 */
-    }
-    button {
-      margin-top: 10px; /* ボタン間にスペースを追加 */
-      padding: 10px 20px; /* ボタンの内側に余白を追加 */
-      font-size: 16px;
-    }
-    .title-container {
-      width: 100%; /* 幅を調整して統一感を持たせる */
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-    /* 進捗率に応じた色付け */
-    .progress-low .bar {
-      fill: #ffcccc; /* 赤 (低進捗) */
-    }
-    .progress-medium .bar {
-      fill: #ffe066; /* 黄色 (中進捗) */
-    }
-    .progress-high .bar {
-      fill: #66ccff; /* 青 (高進捗) */
-    }
-    .progress-complete .bar {
-      fill: #66ff66; /* 緑 (完了) */
+    .button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <div class="title-container">
-    <h1>イベントスケジュール</h1>
+  <div class="container">
+    <h1>イベントスケジュールへようこそ</h1>
+    <p>以下のボタンをクリックして、スケジュールページに移動できます。</p>
+    <a href="./page/events.html" class="button">スケジュールを見る</a>
   </div>
-
-  <div class="top-buttons">
-    <label>
-      タスク名でフィルタ:
-      <input type="text" id="taskNameFilter" placeholder="タスク名でフィルタ" />
-    </label>
-    <label>
-      <input type="checkbox" id="showCompleted" />
-      終了したイベントを表示
-    </label>
-    <label>
-      日付選択:
-      <input type="date" id="datePicker" />
-    </label>
-    <button id="copyButton">指定日付のイベントをコピー</button>
-  </div>
-
-  <div id="gantt"></div>
-
-  <!-- Frappe Ganttライブラリ -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
-  <!-- 外部JavaScriptファイルをリンク -->
-  <script src="./JavaScript/script.js"></script>
 </body>
 </html>
