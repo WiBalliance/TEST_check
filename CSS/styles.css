@@ -1,0 +1,26 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+#gantt {
+  margin-top: 20px;
+  height: 500px;
+}
+
+button, label {
+  margin-right: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.top-buttons {
+  display: flex;
+  flex-direction: column; /* 縦に並べる */
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.title-container {
+  margin-bottom: 20px;
+}
