@@ -19,10 +19,12 @@ button, label {
   flex-direction: column; /* 縦に並べる */
   align-items: flex-start;
   margin-bottom: 20px;
+  gap: 10px; /* 要素間にスペースを追加 */
 }
 
 .title-container {
-  margin-bottom: 20px;
+  width: 100%; /* 幅を調整して統一感を持たせる */
+  font-size: 16px;
 }
 
 /* 進捗率に応じた色付け */
