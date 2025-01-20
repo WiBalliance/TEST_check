@@ -56,8 +56,9 @@ const loadTasks = async () => {
         './tasks/tasks_toride.json',
         './tasks/tasks_sikannkeikaku.json',
         './tasks/tasks_jina.json',
-        './tasks/tasks_kuma1.json'
-        //'tasks_kuma2.json'  //未設置
+        './tasks/tasks_kuma1.json',
+        //'tasks_kuma2.json',  //未設置
+        './tasks/tasks_station.json'
       ];
 
   try {
