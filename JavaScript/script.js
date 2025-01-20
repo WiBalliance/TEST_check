@@ -1,6 +1,6 @@
 let allTasks = []; // すべてのタスクデータを保持
 
-// 進捗をタスクの開始日と終了日から計算する関数.
+// 進捗率を計算する関数
 const calculateProgress = (task) => {
   const now = new Date();
   const start = new Date(task.start);
@@ -10,7 +10,23 @@ const calculateProgress = (task) => {
 
   if (elapsedTime < 0) return 0; // タスクがまだ開始されていない場合
   if (elapsedTime > totalDuration) return 100; // タスクが完了した場合
-  return (elapsedTime / totalDuration) * 100;
+  return Math.floor((elapsedTime / totalDuration) * 100); // 小数点以下切り捨て
+};
+
+// 進捗率に基づいてCSSクラスを割り当てる関数
+const getProgressClass = (progress) => {
+  if (progress <= 25) return "progress-low";
+  if (progress <= 50) return "progress-medium";
+  if (progress <= 75) return "progress-high";
+  return "progress-complete";
+};
+
+// ガントチャートのタスクデータを更新する関数
+const updateTaskProgress = (tasks) => {
+  return tasks.map(task => {
+    const progress = calculateProgress(task);
+    return { ...task, progress, custom_class: getProgressClass(progress) };
+  });
 };
 
 // ガントチャートを更新する関数
@@ -27,10 +43,14 @@ const updateGantt = (showCompleted, nameFilter = '') => {
     return (showCompleted || endDate >= now) && matchesName;
   });
 
-  const gantt = new Gantt("#gantt", filteredTasks, {
-    view_mode: "Day",
-    date_format: "YYYY-MM-DD", // 日付の表示形式
-    editable: false
+  // タスクデータに進捗率とカスタムクラスを追加
+  const tasksWithProgress = updateTaskProgress(filteredTasks);
+
+  // ガントチャートを描画
+  const gantt = new Gantt("#gantt", tasksWithProgress, {
+    view_mode: "Hour", // 時間単位表示
+    date_format: "YYYY-MM-DD HH:mm", // 日付＋時間表示
+    editable: false, // 編集不可
   });
 };
 
