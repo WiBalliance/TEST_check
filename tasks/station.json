@@ -1,0 +1,66 @@
+[
+  {
+    "id": "station_1",
+    "name": "建築	lv3",
+    "start": "2025-01-21 04:49",
+    "end": "2025-01-22 04:49",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_2",
+    "name": "技術	lv3",
+    "start": "2025-01-22 07:41",
+    "end": "2025-01-23 07:41",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_3",
+    "name": "採集	lv1",
+    "start": "2025-01-21 00:48",
+    "end": "2025-01-22 00:48",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_4",
+    "name": "武器	lv2",
+    "start": "2025-01-21 00:35",
+    "end": "2025-01-22 00:35",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_5",
+    "name": "生産	lv1",
+    "start": "2025-01-23 10:22",
+    "end": "2025-01-24 10:22",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_6",
+    "name": "遠征	lv3",
+    "start": "2025-01-21 05:20",
+    "end": "2025-01-22 05:20",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_7",
+    "name": "防御	lv2",
+    "start": "2025-01-20 23:28",
+    "end": "2025-01-21 23:28",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_8",
+    "name": "防御	lv4",
+    "start": "2025-01-21 16:21",
+    "end": "2025-01-22 16:21",
+    "progress": 0,
+    "dependencies": ""
+  }
+]
