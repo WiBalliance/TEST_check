@@ -38,24 +38,24 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 const loadTasks = async () => {
   const taskFiles = [
     // 終了イベント
-    'tasks_old.json',
+    './tasks/tasks_old.json',                //終了したイベント
     // 
-    'tasks_turi.json',
+    './tasks/tasks_turi.json',               //釣り穴選手権
     // 超得イベント
-    'tasks_setugenboueki.json',
+    './tasks/tasks_setugenboueki.json',  　　//雪原貿易
     // 通常イベント
-    'tasks_hyougennsihaisya.json',
-    'tasks_gunbi.json',
-    'tasks_doumeisoudouin.json',
-    'tasks_heiki.json',
-    'tasks_doumeisouha.json',
-    'tasks_kyoukoku.json',
-    'tasks_toride.json',
-    'tasks_sikannkeikaku.json',
-    'tasks_jina.json',
-    'tasks_kuma1.json',
-    //'tasks_kuma2.json',  //未設置
-    './tasks/tasks_station.json'
+    './tasks/tasks_hyougennsihaisya.json',　 //氷原支配者
+    './tasks/tasks_gunbi.json',              //軍備競技
+    './tasks/tasks_doumeisoudouin.json',     //同盟総動員
+    './tasks/tasks_heiki.json',              //兵器工場争奪戦
+    './tasks/tasks_doumeisouha.json',        //同盟争覇戦
+    './tasks/tasks_kyoukoku.json',           //峡谷合戦
+    './tasks/tasks_toride.json',             //要塞・砦争奪戦
+    './tasks/tasks_sikannkeikaku.json',      //士官計画
+    './tasks/tasks_jina.json',               //ジーナの復讐
+    './tasks/tasks_station.json',            //ST
+    './tasks/tasks_kuma1.json'               //熊罠1
+    //'./tasks/tasks_kuma2.json'               //熊罠2  未設置
   ];
 
   try {
