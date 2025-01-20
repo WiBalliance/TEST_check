@@ -29,23 +29,28 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   });
 };
 
-// タスクデータをロードする関数
-const loadTasks = async () => {
-  const taskFiles = [
-    'https://wiballiance.github.io/tasks/tasks_old.json',
-    'https://wiballiance.github.io/tasks/tasks_turi.json',
-    'https://wiballiance.github.io/tasks/tasks_setugenboueki.json',
-    'https://wiballiance.github.io/tasks/tasks_hyougennsihaisya.json',
-    'https://wiballiance.github.io/tasks/tasks_gunbi.json',
-    'https://wiballiance.github.io/tasks/tasks_doumeisoudouin.json',
-    'https://wiballiance.github.io/tasks/tasks_heiki.json',
-    'https://wiballiance.github.io/tasks/tasks_doumeisouha.json',
-    'https://wiballiance.github.io/tasks/tasks_kyoukoku.json',
-    'https://wiballiance.github.io/tasks/tasks_toride.json',
-    'https://wiballiance.github.io/tasks/tasks_sikannkeikaku.json',
-    'https://wiballiance.github.io/tasks/tasks_jina.json',
-    'https://wiballiance.github.io/tasks/tasks_kuma1.json'
-  ];
+    // 複数のJSONファイルを読み込む関数
+    const loadTasks = async () => {
+      const taskFiles = [
+        // 終了イベント
+        './tasks/tasks_old.json',
+        // 
+        './tasks/tasks_turi.json',
+        // 超得イベント
+        './tasks/tasks_setugenboueki.json',
+        // 通常イベント
+        './tasks/tasks_hyougennsihaisya.json',
+        './tasks/tasks_gunbi.json',
+        './tasks/tasks_doumeisoudouin.json',
+        './tasks/tasks_heiki.json',
+        './tasks/tasks_doumeisouha.json',
+        './tasks/tasks_kyoukoku.json',
+        './tasks/tasks_toride.json',
+        './tasks/tasks_sikannkeikaku.json',
+        './tasks/tasks_jina.json',
+        './tasks/tasks_kuma1.json'
+        //'tasks_kuma2.json'  //未設置
+      ];
 
   try {
     const tasks = await Promise.all(taskFiles.map(file =>
