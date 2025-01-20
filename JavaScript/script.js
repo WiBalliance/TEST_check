@@ -29,9 +29,13 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   
   const gantt = new Gantt("#gantt", filteredTasks, {
     view_mode: "Day",
+    scale_unit: "hour", // 時間単位で表示
+    step: 2, // 1時間単位で表示
     date_format: "YYYY-MM-DD", // 日付の表示形式
     time_format: "%H:%M", // 24時間形式の時刻表示 (デフォルトは12時間形式)
-    editable: false
+    editable: false, // 編集不可
+    draggable: false, // タスクのドラッグ（移動）を無効にする
+    resizable: false, // タスクのサイズ変更を無効にする
   });
 };
 
