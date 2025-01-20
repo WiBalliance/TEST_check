@@ -125,9 +125,7 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const tasksToCopy = targetTasks.map(task => {
     const taskStartDate = new Date(task.start);
     const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`; // 開始時刻の取得
-    const diffTime = targetDate - taskStartDate;
-    const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
-    return `${taskStartFormattedTime}~ ${task.name} (${diffDays}日目)`;  // 時刻 + イベント名 + 開始日からの日数
+    return `${taskStartFormattedTime}~ ${task.name} `;  // 時刻 + イベント名
   }).join('\n');
 
   const textArea = document.createElement("textarea");
