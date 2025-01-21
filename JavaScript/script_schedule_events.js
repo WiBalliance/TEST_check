@@ -30,15 +30,17 @@ const updateTaskProgress = (tasks) => {
 };
 
 // 繰り返しタスクを展開する関数
-const generateRepeatingTasks = (tasks) => {
+const generateRepeatingTasks = (tasks, globalRepeat) => {
   const expandedTasks = [];
 
   tasks.forEach(task => {
     expandedTasks.push(task); // 元のタスクを追加
 
-    if (task.repeat) {
-      const interval = task.repeat.interval;
-      const repeatEndDate = new Date(task.repeat.end_date);
+    const taskRepeat = task.repeat || globalRepeat; // タスク個別のrepeatを優先、なければグローバルrepeat
+
+    if (taskRepeat) {
+      const interval = taskRepeat.interval;
+      const repeatEndDate = new Date(taskRepeat.end_date);
       let currentStartDate = new Date(task.start);
       let currentEndDate = new Date(task.end);
 
