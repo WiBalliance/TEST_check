@@ -1,18 +1,10 @@
 [
   {
     "id": "",
-    "name": "同盟総動員",
-    "start": "2025-01-13 09:00",
-    "end": "2025-01-19 09:00",
-    "progress": 0,
-    "dependencies": ""
-  },
-  {
-    "id": "",
-    "name": "熊罠 1",
-    "start": "2025-01-19 21:00",
-    "end": "2025-01-19 21:30",
-    "progress": 0,
+    "name": "",
+    "start": "",
+    "end": "",
+    "progress": "",
     "dependencies": ""
   }
 ]
