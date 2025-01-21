@@ -40,7 +40,7 @@ const updateGanttWithHourlyView = (tasks) => {
     step: 1, // 1時間単位で進める
     column_width: 40, // カラム幅を調整（時間単位で見やすいようにする）
     bar_height: 20, // タスクバーの高さ
-    padding: 18, // バーの間隔を調整
+    padding: 18 // バーの間隔を調整
   });
 
   // 時間単位でのスケールを再描画
