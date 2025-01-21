@@ -81,10 +81,17 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   // タスクデータに進捗率とカスタムクラスを追加
   const tasksWithProgress = updateTaskProgress(filteredTasks);
 
-  // ガントチャートを描画
+  // ガントチャートを描画（1時間単位のカスタムスケールを設定）
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Hour",
+    view_mode: "Custom",
     date_format: "YYYY-MM-DD HH:mm",
+    column_width: 60, // カラム幅
+    step: 1, // 時間単位
+    custom_scale: {
+      start: (date) => date.setMinutes(0, 0, 0),
+      end: (date) => date.setMinutes(59, 59, 999),
+      next: (date) => new Date(date.setHours(date.getHours() + 1))
+    },
     editable: false
   });
 };
