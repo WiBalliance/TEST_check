@@ -1,52 +1,136 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WiBトップページ</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .container {
-      display: flex; /* フレックスボックスを使用 */
-      flex-direction: column; /* 縦に並べる */
-      align-items: center; /* 水平方向に中央揃え */
-      justify-content: center; /* 垂直方向に中央揃え */
-      height: 100vh; /* ビューポートの高さに合わせる */
-      padding: 20px;
-    }
-    h1 {
-      font-size: 36px;
-      color: #333;
-    }
-    .button {
-      background-color: #4CAF50;
-      color: white;
-      font-size: 18px;
-      padding: 15px 30px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
-      display: block; /* ボタンをブロック要素にして縦に並べる */
-      width: 100%; /* ボタンの幅を100%に */
-      max-width: 300px; /* 最大幅を設定 */
-    }
-    .button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>イベントカレンダー</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .calendar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .gantt-chart {
+            display: grid;
+            grid-template-columns: repeat(24, 1fr);
+            gap: 1px;
+            background: #ddd;
+        }
+        .gantt-cell {
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            background: #fff;
+        }
+        .event {
+            background: #87CEEB;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>ようこそ</h1>
-    <a href="./page/schedule_events.html" class="button">イベントスケジュール</a>
-    <a href="./page/schedule_st.html" class="button">STスケジュール</a>
-  </div>
+    <div class="calendar">
+        <div class="controls">
+            <button id="togglePastEvents">過去のイベントを表示/非表示</button>
+            <label>
+                日付選択: <input type="date" id="datePicker">
+            </label>
+            <button id="copyEvents">イベントをコピー</button>
+        </div>
+        <div class="gantt-chart" id="ganttChart">
+            <!-- 時間枠 -->
+            <div class="gantt-cell">0時</div>
+            <div class="gantt-cell">1時</div>
+            <!-- 省略 -->
+            <div class="gantt-cell">23時</div>
+        </div>
+    </div>
+
+    <script>
+        // イベントデータ (例)
+        const events = [
+            { title: "朝会", start: "2025-01-21T09:00", end: "2025-01-21T10:00", repeat: false },
+            { title: "ランチミーティング", start: "2025-01-21T12:00", end: "2025-01-21T13:00", repeat: true },
+        ];
+
+        const ganttChart = document.getElementById("ganttChart");
+        const toggleButton = document.getElementById("togglePastEvents");
+        const datePicker = document.getElementById("datePicker");
+        const copyButton = document.getElementById("copyEvents");
+        let showPastEvents = true;
+
+        // 現時刻
+        const now = new Date();
+
+        function renderEvents() {
+            // 既存イベントのクリア
+            const cells = ganttChart.querySelectorAll(".gantt-cell");
+            cells.forEach(cell => cell.innerHTML = "");
+
+            // イベントを描画
+            events.forEach(event => {
+                const startTime = new Date(event.start);
+                const endTime = new Date(event.end);
+
+                if (!showPastEvents && endTime < now) return;
+
+                const startHour = startTime.getHours();
+                const endHour = endTime.getHours();
+
+                for (let i = startHour; i < endHour; i++) {
+                    const cell = ganttChart.children[i];
+                    if (cell) {
+                        cell.innerHTML = `<div class='event'>${event.title}</div>`;
+                    }
+                }
+            });
+        }
+
+        toggleButton.addEventListener("click", () => {
+            showPastEvents = !showPastEvents;
+            renderEvents();
+        });
+
+        copyButton.addEventListener("click", () => {
+            const selectedDate = datePicker.value;
+            if (!selectedDate) {
+                alert("日付を選択してください。");
+                return;
+            }
+
+            const newEvents = events.map(event => {
+                if (!event.repeat) return null;
+                const newStart = new Date(event.start);
+                const newEnd = new Date(event.end);
+                newStart.setDate(new Date(selectedDate).getDate());
+                newEnd.setDate(new Date(selectedDate).getDate());
+
+                return {
+                    ...event,
+                    start: newStart.toISOString(),
+                    end: newEnd.toISOString(),
+                };
+            }).filter(event => event);
+
+            events.push(...newEvents);
+            renderEvents();
+            alert("イベントをコピーしました。");
+        });
+
+        // 初期描画
+        renderEvents();
+    </script>
 </body>
 </html>
