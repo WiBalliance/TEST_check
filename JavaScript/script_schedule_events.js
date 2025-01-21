@@ -66,10 +66,16 @@ const generateRepeatingTasks = (tasks) => {
 // ガントチャートを更新する関数
 const updateGantt = (showCompleted, nameFilter = '') => {
   const now = new Date();
+  const twoWeeksLater = new Date();
+  twoWeeksLater.setDate(now.getDate() + 14); // 現在から14日後の日付
+
   const filteredTasks = allTasks.filter(task => {
+    const start = new Date(task.start);
     const end = new Date(task.end);
     const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-    return (showCompleted || end >= now) && matchesName;
+
+    // 条件: 過去のタスクまたは2週間以上先のタスクを除外
+    return (showCompleted || end >= now) && start <= twoWeeksLater && matchesName;
   });
 
   // タスクデータに進捗率とカスタムクラスを追加
@@ -146,7 +152,12 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const targetTasks = allTasks.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
-    return start <= targetDate && end >= targetDate;
+    
+    // ターゲット日付を基準に、開始時間や終了時間が短い場合でも重なっていればコピー対象にする
+    const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
+    const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
+  
+    return (start < targetEndDate && end > targetStartDate); // 開始日または終了日がターゲット日と重なる場合
   });
 
   if (targetTasks.length === 0) {
