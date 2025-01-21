@@ -93,7 +93,7 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 const loadTasks = async () => {
   const taskFiles = [
     // 終了イベント
-    "../tasks/tasks_old.json",                //終了したイベント
+    // "../tasks/tasks_old.json",                //終了したイベント
     // 
     "../tasks/tasks_turi.json",               //釣り穴選手権
     // 超得イベント
