@@ -2,13 +2,13 @@
   {
     "id": "tasks_doumeisoudouin_1",
     "name": "同盟総動員",
-    "start": "2025-01-01 09:00",
-    "end": "2025-01-04 09:00",
+    "start": "2025-01-20 09:00",
+    "end": "2025-01-25 09:00",
     "progress": 0,
     "dependencies": "",
     "repeat": {
       "interval": 7,
-      "end_date": "2025-02-28"
+      "end_date": "2025-12-31"
     }
   }
 ]

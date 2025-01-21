@@ -67,7 +67,7 @@ const generateRepeatingTasks = (tasks) => {
 const updateGantt = (showCompleted, nameFilter = '') => {
   const now = new Date();
   const twoWeeksLater = new Date();
-  twoWeeksLater.setDate(now.getDate() + 14); // 現在から14日後の日付
+  twoWeeksLater.setDate(now.getDate() + 8); // 現在から8日後の日付
 
   const filteredTasks = allTasks.filter(task => {
     const start = new Date(task.start);
@@ -81,17 +81,10 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   // タスクデータに進捗率とカスタムクラスを追加
   const tasksWithProgress = updateTaskProgress(filteredTasks);
 
-  // ガントチャートを描画（1時間単位のカスタムスケールを設定）
+  // ガントチャートを描画
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Custom",
+    view_mode: "Day",
     date_format: "YYYY-MM-DD HH:mm",
-    column_width: 60, // カラム幅
-    step: 1, // 時間単位
-    custom_scale: {
-      start: (date) => date.setMinutes(0, 0, 0),
-      end: (date) => date.setMinutes(59, 59, 999),
-      next: (date) => new Date(date.setHours(date.getHours() + 1))
-    },
     editable: false
   });
 };

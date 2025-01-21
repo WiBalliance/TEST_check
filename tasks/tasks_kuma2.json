@@ -5,6 +5,10 @@
     "start": "2025-01-22 21:00",
     "end": "2025-01-22 21:30",
     "progress": 0,
-    "dependencies": ""
+    "dependencies": "",
+    "repeat": {
+      "interval": 2,
+      "end_date": "2025-12-31"
+    }
   }
 ]

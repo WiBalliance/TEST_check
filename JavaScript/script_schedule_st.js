@@ -29,32 +29,63 @@ const updateTaskProgress = (tasks) => {
   });
 };
 
-// ガントチャートを時間ごとに表示する関数
-const updateGanttWithHourlyView = (tasks) => {
-  // ガントチャートデータにカスタムスケールを設定
-  const gantt = new Gantt("#gantt", tasks, {
-    custom_popup_html: null, // 必要に応じてカスタムポップアップを設定
-    view_modes: ["Hour"], // カスタムモードを作成
-    view_mode: "Hour", // 1時間単位での表示
-    date_format: "YYYY-MM-DD HH:mm", // 日付+時間形式を設定
-    step: 1, // 1時間単位で進める
-    column_width: 40, // カラム幅を調整（時間単位で見やすいようにする）
-    bar_height: 20, // タスクバーの高さ
-    padding: 18 // バーの間隔を調整
+// 繰り返しタスクを展開する関数
+const generateRepeatingTasks = (tasks) => {
+  const expandedTasks = [];
+
+  tasks.forEach(task => {
+    expandedTasks.push(task); // 元のタスクを追加
+
+    if (task.repeat) {
+      const interval = task.repeat.interval;
+      const repeatEndDate = new Date(task.repeat.end_date);
+      let currentStartDate = new Date(task.start);
+      let currentEndDate = new Date(task.end);
+
+      // 繰り返しを生成
+      while (true) {
+        currentStartDate.setDate(currentStartDate.getDate() + interval);
+        currentEndDate.setDate(currentEndDate.getDate() + interval);
+
+        if (currentStartDate > repeatEndDate) break;
+
+        // 繰り返しタスクを追加
+        expandedTasks.push({
+          ...task,
+          id: `${task.id}_repeat_${currentStartDate.toISOString()}`,
+          start: currentStartDate.toISOString(),
+          end: currentEndDate.toISOString()
+        });
+      }
+    }
   });
 
-  // 時間単位でのスケールを再描画
-  gantt.setup_tasks(tasks);
+  return expandedTasks;
 };
+
+// ガントチャートを更新する関数
+const updateGantt = (showCompleted, nameFilter = '') => {
+  const now = new Date();
+  const twoWeeksLater = new Date();
+  twoWeeksLater.setDate(now.getDate() + 8); // 現在から8日後の日付
+
+  const filteredTasks = allTasks.filter(task => {
+    const start = new Date(task.start);
+    const end = new Date(task.end);
+    const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
+
+    // 条件: 過去のタスクまたは2週間以上先のタスクを除外
+    return (showCompleted || end >= now) && start <= twoWeeksLater && matchesName;
+  });
 
   // タスクデータに進捗率とカスタムクラスを追加
   const tasksWithProgress = updateTaskProgress(filteredTasks);
 
   // ガントチャートを描画
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Hour", // 1時間単位表示に変更
-    date_format: "YYYY-MM-DD HH:mm", // 日付＋時刻表示に変更
-    editable: false // 編集不可
+    view_mode: "Day",
+    date_format: "YYYY-MM-DD HH:mm",
+    editable: false
   });
 };
 
@@ -70,7 +101,7 @@ const loadTasks = async () => {
     const tasks = await Promise.all(taskFiles.map(file =>
       fetch(file).then(response => response.json())
     ));
-    allTasks = tasks.flat(); // タスクを1つの配列にまとめる
+    allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
     updateGantt(false); // 初期表示
   } catch (error) {
     console.error('Error loading tasks:', error);
@@ -103,11 +134,6 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const targetDate = new Date(selectedDate);
   const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
 
-  // 経過日数を各タスクの開始日から計算
-  const today = new Date();
-  const targetStartDate = new Date(targetDate);  // 日付選択の開始日
-  const targetStartFormattedDate = `${targetStartDate.getFullYear()}-${String(targetStartDate.getMonth() + 1).padStart(2, '0')}-${String(targetStartDate.getDate()).padStart(2, '0')}`;
-
   const targetTasks = allTasks.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
@@ -128,12 +154,10 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const sortedTasks = targetTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
 
   // コピー用テキストを作成
-  const tasksToCopy = targetTasks.map(task => {
+  const tasksToCopy = sortedTasks.map(task => {
     const taskStartDate = new Date(task.start);
-    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`; // 開始時刻の取得
-    const diffTime = targetDate - taskStartDate;
-    const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
-    return `${taskStartFormattedTime}~ ${task.name}`;  // 時刻 + イベント名 + 開始日からの日数
+    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
+    return `${taskStartFormattedTime}~ ${task.name}`;
   }).join('\n');
 
   const textArea = document.createElement("textarea");
