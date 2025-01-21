@@ -30,17 +30,15 @@ const updateTaskProgress = (tasks) => {
 };
 
 // 繰り返しタスクを展開する関数
-const generateRepeatingTasks = (tasks, globalRepeat) => {
+const generateRepeatingTasks = (tasks) => {
   const expandedTasks = [];
 
   tasks.forEach(task => {
     expandedTasks.push(task); // 元のタスクを追加
 
-    const taskRepeat = task.repeat || globalRepeat; // タスク個別のrepeatを優先、なければグローバルrepeat
-
-    if (taskRepeat) {
-      const interval = taskRepeat.interval;
-      const repeatEndDate = new Date(taskRepeat.end_date);
+    if (task.repeat) {
+      const interval = task.repeat.interval;
+      const repeatEndDate = new Date(task.repeat.end_date);
       let currentStartDate = new Date(task.start);
       let currentEndDate = new Date(task.end);
 
@@ -69,7 +67,7 @@ const generateRepeatingTasks = (tasks, globalRepeat) => {
 const updateGantt = (showCompleted, nameFilter = '') => {
   const now = new Date();
   const twoWeeksLater = new Date();
-  twoWeeksLater.setDate(now.getDate() + 14); // 現在から8日後の日付
+  twoWeeksLater.setDate(now.getDate() + 8); // 現在から8日後の日付
 
   const filteredTasks = allTasks.filter(task => {
     const start = new Date(task.start);
@@ -95,7 +93,7 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 const loadTasks = async () => {
   const taskFiles = [
     // 終了イベント
-    // "../tasks/tasks_old.json",                //終了したイベント
+    "../tasks/tasks_old.json",                //終了したイベント
     // 
     "../tasks/tasks_turi.json",               //釣り穴選手権
     // 超得イベント
