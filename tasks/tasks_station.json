@@ -1,63 +1,95 @@
 [
   {
     "id": "station_1",
-    "name": "建築ST lv3 防衛",
+    "name": "建築ST lv1 【未取得】",
+    "start": "",
+    "end": "",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_2",
+    "name": "建築ST lv3 【防衛】",
     "start": "2025-01-21 04:49",
     "end": "2025-01-22 04:49",
     "progress": 0,
     "dependencies": ""
   },
   {
-    "id": "station_2",
-    "name": "技術ST lv3 防衛(時短可)",
+    "id": "station_3",
+    "name": "技術ST lv1 【未取得】",
+    "start": "",
+    "end": "",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_4",
+    "name": "技術ST lv3 【防衛】(時短可)",
     "start": "2025-01-22 07:41",
     "end": "2025-01-23 07:41",
     "progress": 0,
     "dependencies": ""
   },
   {
-    "id": "station_3",
-    "name": "採集ST lv1 防衛(時短可)",
-    "start": "2025-01-21 00:48",
-    "end": "2025-01-22 00:48",
-    "progress": 0,
-    "dependencies": ""
-  },
-  {
-    "id": "station_4",
-    "name": "武器ST lv2 防衛(時短可)",
-    "start": "2025-01-21 00:35",
-    "end": "2025-01-22 00:35",
-    "progress": 0,
-    "dependencies": ""
-  },
-  {
     "id": "station_5",
-    "name": "生産ST lv1 防衛",
+    "name": "訓練ST lv2 【未取得】",
+    "start": "",
+    "end": "",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_6",
+    "name": "生産ST lv1 【防衛】",
     "start": "2025-01-23 10:22",
     "end": "2025-01-24 10:22",
     "progress": 0,
     "dependencies": ""
   },
   {
-    "id": "station_6",
-    "name": "遠征ST lv3 防衛(時短可)",
-    "start": "2025-01-21 05:20",
-    "end": "2025-01-22 05:20",
-    "progress": 0,
-    "dependencies": ""
-  },
-  {
     "id": "station_7",
-    "name": "防御ST lv2 防衛",
-    "start": "2025-01-20 23:28",
-    "end": "2025-01-21 23:28",
+    "name": "採集ST lv1 【防衛】(時短可)",
+    "start": "2025-01-24 08:17",
+    "end": "2025-01-25 08:17",
     "progress": 0,
     "dependencies": ""
   },
   {
     "id": "station_8",
-    "name": "防御ST lv4 防衛(時短可)",
+    "name": "遠征ST lv3 【防衛】(時短可)",
+    "start": "2025-01-24 09:35",
+    "end": "2025-01-25 09:35",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_9",
+    "name": "武器ST lv2 【防衛】(時短可)",
+    "start": "2025-01-24 08:42",
+    "end": "2025-01-25 08:42",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_10",
+    "name": "武器ST lv4 【未取得】",
+    "start": "",
+    "end": "",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_11",
+    "name": "防御ST lv2 【取り返すぞー】",
+    "start": "2025-01-24 00:09",
+    "end": "2025-01-25 00:09",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_12",
+    "name": "防御ST lv4 【防衛】(時短可)",
     "start": "2025-01-21 16:21",
     "end": "2025-01-22 16:21",
     "progress": 0,

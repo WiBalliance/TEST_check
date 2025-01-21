@@ -35,12 +35,7 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   const filteredTasks = allTasks.filter(task => {
     const end = new Date(task.end);
     const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-
-    // 日付部分を比較するため、時刻を無視して YYYY-MM-DD の形式に変換
-    const startDate = new Date(task.start.split(' ')[0]); // 時刻を削除して日付だけにする
-    const endDate = new Date(task.end.split(' ')[0]); // 時刻を削除して日付だけにする
-
-    return (showCompleted || endDate >= now) && matchesName;
+    return (showCompleted || end >= now) && matchesName;
   });
 
   // タスクデータに進捗率とカスタムクラスを追加
@@ -48,8 +43,8 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 
   // ガントチャートを描画
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Day", // 時間単位表示
-    date_format: "YYYY-MM-DD", // 日付＋時間表示
+    view_mode: "Hour", // 1時間単位表示に変更
+    date_format: "YYYY-MM-DD HH:mm", // 日付＋時刻表示に変更
     editable: false // 編集不可
   });
 };
@@ -57,6 +52,8 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 // 複数のJSONファイルを読み込む関数
 const loadTasks = async () => {
   const taskFiles = [
+    // 終了イベント
+    "../tasks/tasks_station_old.json",   //終了したステ戦
     "../tasks/tasks_station.json"
   ];
 
