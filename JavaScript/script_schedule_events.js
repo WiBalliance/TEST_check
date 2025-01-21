@@ -67,7 +67,7 @@ const generateRepeatingTasks = (tasks) => {
 const updateGantt = (showCompleted, nameFilter = '') => {
   const now = new Date();
   const twoWeeksLater = new Date();
-  twoWeeksLater.setDate(now.getDate() + 6); // 現在から8日後の日付
+  twoWeeksLater.setDate(now.getDate() + 8); // 現在から8日後の日付
 
   const filteredTasks = allTasks.filter(task => {
     const start = new Date(task.start);
@@ -83,8 +83,8 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 
   // ガントチャートを描画
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Day",
-    date_format: "YYYY-MM-DD",
+    view_mode: "Hour",
+    date_format: "YYYY-MM-DD HH:mm",
     editable: false
   });
 };
