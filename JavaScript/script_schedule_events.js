@@ -29,18 +29,47 @@ const updateTaskProgress = (tasks) => {
   });
 };
 
+// 繰り返しタスクを展開する関数
+const generateRepeatingTasks = (tasks) => {
+  const expandedTasks = [];
+
+  tasks.forEach(task => {
+    expandedTasks.push(task); // 元のタスクを追加
+
+    if (task.repeat) {
+      const interval = task.repeat.interval;
+      const repeatEndDate = new Date(task.repeat.end_date);
+      let currentStartDate = new Date(task.start);
+      let currentEndDate = new Date(task.end);
+
+      // 繰り返しを生成
+      while (true) {
+        currentStartDate.setDate(currentStartDate.getDate() + interval);
+        currentEndDate.setDate(currentEndDate.getDate() + interval);
+
+        if (currentStartDate > repeatEndDate) break;
+
+        // 繰り返しタスクを追加
+        expandedTasks.push({
+          ...task,
+          id: `${task.id}_repeat_${currentStartDate.toISOString()}`,
+          start: currentStartDate.toISOString(),
+          end: currentEndDate.toISOString()
+        });
+      }
+    }
+  });
+
+  return expandedTasks;
+};
+
 // ガントチャートを更新する関数
 const updateGantt = (showCompleted, nameFilter = '') => {
   const now = new Date();
   const filteredTasks = allTasks.filter(task => {
     const end = new Date(task.end);
     const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-
-    // 日付部分を比較するため、時刻を無視して YYYY-MM-DD の形式に変換
-    const startDate = new Date(task.start.split(' ')[0]); // 時刻を削除して日付だけにする
-    const endDate = new Date(task.end.split(' ')[0]); // 時刻を削除して日付だけにする
-
-    return (showCompleted || endDate >= now) && matchesName;
+    return (showCompleted || end >= now) && matchesName;
   });
 
   // タスクデータに進捗率とカスタムクラスを追加
@@ -48,9 +77,9 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 
   // ガントチャートを描画
   const gantt = new Gantt("#gantt", tasksWithProgress, {
-    view_mode: "Day", // 時間単位表示
-    date_format: "YYYY-MM-DD", // 日付＋時間表示
-    editable: false // 編集不可
+    view_mode: "Day",
+    date_format: "YYYY-MM-DD",
+    editable: false
   });
 };
 
@@ -81,7 +110,7 @@ const loadTasks = async () => {
     const tasks = await Promise.all(taskFiles.map(file =>
       fetch(file).then(response => response.json())
     ));
-    allTasks = tasks.flat(); // タスクを1つの配列にまとめる
+    allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
     updateGantt(false); // 初期表示
   } catch (error) {
     console.error('Error loading tasks:', error);
@@ -114,20 +143,10 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const targetDate = new Date(selectedDate);
   const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
 
-  // 経過日数を各タスクの開始日から計算
-  const today = new Date();
-  const targetStartDate = new Date(targetDate);  // 日付選択の開始日
-  const targetStartFormattedDate = `${targetStartDate.getFullYear()}-${String(targetStartDate.getMonth() + 1).padStart(2, '0')}-${String(targetStartDate.getDate()).padStart(2, '0')}`;
-
   const targetTasks = allTasks.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
-    
-    // ターゲット日付を基準に、開始時間や終了時間が短い場合でも重なっていればコピー対象にする
-    const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
-    const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
-  
-    return (start < targetEndDate && end > targetStartDate); // 開始日または終了日がターゲット日と重なる場合
+    return start <= targetDate && end >= targetDate;
   });
 
   if (targetTasks.length === 0) {
@@ -139,12 +158,10 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const sortedTasks = targetTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
 
   // コピー用テキストを作成
-  const tasksToCopy = targetTasks.map(task => {
+  const tasksToCopy = sortedTasks.map(task => {
     const taskStartDate = new Date(task.start);
-    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`; // 開始時刻の取得
-    const diffTime = targetDate - taskStartDate;
-    const diffDays = Math.floor((diffTime / (1000 * 60 * 60 * 24)) + 1); // 開始日からの経過日数
-    return `${taskStartFormattedTime}~ ${task.name}`;  // 時刻 + イベント名 + 開始日からの日数
+    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
+    return `${taskStartFormattedTime}~ ${task.name}`;
   }).join('\n');
 
   const textArea = document.createElement("textarea");
