@@ -1,51 +1,36 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
 }
 
-#gantt {
-  margin-top: 20px;
-  height: 500px;
+h1 {
+    text-align: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
 }
 
-.top-buttons {
-  display: flex;
-  flex-direction: column; /* 縦に並べる */
-  align-items: flex-start; /* 左寄せにする */
-  margin-bottom: 20px;
-  gap: 10px; /* 要素間にスペースを追加 */
-  width: 300px; /* 幅を制限して整理 */
+a {
+    display: block;
+    margin: 10px;
+    text-decoration: none;
+    color: #4CAF50;
 }
 
-label {
-  display: block; /* ラベルをブロック要素にして、縦に並べる */
-  margin-bottom: 10px; /* ラベル間のスペースを確保 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
 }
 
-button {
-  margin-top: 10px; /* ボタン間にスペースを追加 */
-  padding: 10px 20px; /* ボタンの内側に余白を追加 */
-  font-size: 16px;
+table, th, td {
+    border: 1px solid #ddd;
 }
 
-.title-container {
-  width: 100%; /* 幅を調整して統一感を持たせる */
-  font-size: 16px;
-}
-
-/* 進捗率に応じた色付け */
-.progress-low .bar {
-  fill: #ffcccc; /* 赤 (低進捗) */
-}
-
-.progress-medium .bar {
-  fill: #ffe066; /* 黄色 (中進捗) */
-}
-
-.progress-high .bar {
-  fill: #66ccff; /* 青 (高進捗) */
-}
-
-.progress-complete .bar {
-  fill: #66ff66; /* 緑 (完了) */
+th, td {
+    padding: 8px;
+    text-align: left;
 }
