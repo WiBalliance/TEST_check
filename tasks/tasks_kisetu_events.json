@@ -2,7 +2,7 @@
  {
     "id": "tasks_kisetu_events",
     "name": "イヤービースト",
-    "start": "2025-01-12 09:00",
+    "start": "2025-01-22 09:00",
     "end": "2025-01-30 09:00",
     "progress": 0,
     "dependencies": ""
@@ -10,7 +10,7 @@
  {
     "id": "tasks_kisetu_events",
     "name": "新春の錦鯉",
-    "start": "2025-01-12 09:00",
+    "start": "2025-01-22 09:00",
     "end": "2025-01-29 09:00",
     "progress": 0,
     "dependencies": ""
@@ -18,7 +18,7 @@
  {
     "id": "tasks_kisetu_events",
     "name": "謹賀領主",
-    "start": "2025-01-12 09:00",
+    "start": "2025-01-22 09:00",
     "end": "2025-01-29 09:00",
     "progress": 0,
     "dependencies": ""
@@ -26,7 +26,7 @@
  {
     "id": "tasks_kisetu_events",
     "name": "累計チャージギフト",
-    "start": "2025-01-12 09:00",
+    "start": "2025-01-22 09:00",
     "end": "2025-01-29 09:00",
     "progress": 0,
     "dependencies": ""
@@ -34,7 +34,7 @@
  {
     "id": "tasks_kisetu_events",
     "name": "珠玉の足跡",
-    "start": "2025-01-12 09:00",
+    "start": "2025-01-22 09:00",
     "end": "2025-01-29 09:00",
     "progress": 0,
     "dependencies": ""
