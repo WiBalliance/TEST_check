@@ -94,6 +94,8 @@ const loadTasks = async () => {
   const taskFiles = [
     // 終了イベント
     "../tasks/tasks_old.json",                //終了したイベント
+    // 季節イベント
+    "../tasks/tasks_kisetu_events.json"       //季節もののイベント
     // 
     "../tasks/tasks_turi.json",               //釣り穴選手権
     // 超得イベント
