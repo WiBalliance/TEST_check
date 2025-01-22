@@ -36,8 +36,23 @@
             padding: 10px;
             font-size: 16px;
         }
+        #password-prompt {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
     <script>
+        function authenticate() {
+            const password = document.getElementById('password').value;
+            if (password === 'securepassword') {
+                document.getElementById('protected-content').style.display = 'block';
+                document.getElementById('password-prompt').style.display = 'none';
+            } else {
+                alert('パスワードが間違っています。');
+            }
+        }
+
         function searchTable() {
             const input = document.getElementById('search');
             const filter = input.value.toLowerCase();
@@ -59,25 +74,32 @@
     </script>
 </head>
 <body>
-    <h1>名前リスト</h1>
-    <input type="text" id="search" onkeyup="searchTable()" placeholder="検索...">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>名前</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>123456</td>
-                <td>たろう</td>
-            </tr>
-            <tr>
-                <td>123457</td>
-                <td>次郎</td>
-            </tr>
-        </tbody>
-    </table>
+    <div id="password-prompt">
+        <h1>パスワード入力</h1>
+        <input type="password" id="password" placeholder="パスワードを入力">
+        <button onclick="authenticate()">送信</button>
+    </div>
+    <div id="protected-content" style="display: none;">
+        <h1>名前リスト</h1>
+        <input type="text" id="search" onkeyup="searchTable()" placeholder="検索...">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名前</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>123456</td>
+                    <td>たろう</td>
+                </tr>
+                <tr>
+                    <td>123457</td>
+                    <td>次郎</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
