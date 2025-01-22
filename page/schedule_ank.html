@@ -18,7 +18,10 @@
             background-color: #f4f4f4;
         }
         .copy-button {
-            margin-top: 10px;
+            margin-top: 5px;
+        }
+        .output-line {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -41,8 +44,7 @@
     <button id="execute-button">実行</button>
     <div id="output-section">
         <h2>出力結果</h2>
-        <textarea id="output-area" rows="10" cols="50"></textarea>
-        <button class="copy-button" onclick="copyToClipboard()">コピー</button>
+        <div id="output-area"></div>
     </div>
 
     <script>
@@ -101,7 +103,7 @@
 
         // 実行ボタンの処理
         document.getElementById('execute-button').addEventListener('click', () => {
-            const output = [];
+            const rewardMap = new Map();
 
             tableBody.querySelectorAll('tr').forEach(row => {
                 const location = row.cells[0].textContent;
@@ -109,20 +111,38 @@
                 const reward = row.cells[2].querySelector('select').value;
 
                 if (reward) {
-                    output.push(`${location}(${alliance})${reward}`);
+                    if (!rewardMap.has(reward)) {
+                        rewardMap.set(reward, []);
+                    }
+                    rewardMap.get(reward).push({ location, alliance });
                 }
             });
 
-            document.getElementById('output-area').value = output.join('\n');
-        });
-
-        // コピー機能
-        function copyToClipboard() {
             const outputArea = document.getElementById('output-area');
-            outputArea.select();
-            document.execCommand('copy');
-            alert('クリップボードにコピーしました！');
-        }
+            outputArea.innerHTML = "";
+
+            rewardMap.forEach((entries, reward) => {
+                const locations = entries.map(entry => entry.location.replace(/^0/, "")).join(",");
+                const alliances = entries.map(entry => entry.alliance).join(",");
+                const line = `${locations}(${alliances})${reward}`;
+
+                const outputLine = document.createElement('div');
+                outputLine.className = 'output-line';
+                outputLine.textContent = line;
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = "コピー";
+                copyButton.className = 'copy-button';
+                copyButton.addEventListener('click', () => {
+                    navigator.clipboard.writeText(line).then(() => {
+                        alert('クリップボードにコピーしました！');
+                    });
+                });
+
+                outputLine.appendChild(copyButton);
+                outputArea.appendChild(outputLine);
+            });
+        });
     </script>
 </body>
 </html>
