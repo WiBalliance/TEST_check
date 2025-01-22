@@ -73,7 +73,7 @@
         }
 
         async function loadTable() {
-            const response = await fetch('data.json');
+            const response = await fetch('../list/maruhi_list.json');
             const data = await response.json();
 
             const tbody = document.querySelector('table tbody');
