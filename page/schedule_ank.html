@@ -144,6 +144,7 @@
                     if (!rewardMap.has(reward)) {
                         rewardMap.set(reward, []);
                     }
+                    const cleanedLocation = cleanedLocation.replace(/\(/g, /号砦\(/g);
                     rewardMap.get(reward).push({ location: cleanedLocation.replace(/^[0]+/, ""), alliance });
                 }
             });
