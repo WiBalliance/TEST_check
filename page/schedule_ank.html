@@ -122,7 +122,7 @@
             outputArea.innerHTML = "";
 
             rewardMap.forEach((entries, reward) => {
-                const locations = entries.map(entry => entry.location.replace(/号砦,/, "")).join(",");
+                const locations = entries.map(entry => entry.location.replace(/"号砦,"/, "")).join(",");
                 const alliances = entries.map(entry => entry.alliance).join(",");
                 const line = `${locations}(${alliances})${reward}`;
 
