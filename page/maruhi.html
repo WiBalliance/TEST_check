@@ -47,6 +47,7 @@
             if (password === 'securepassword') {
                 document.getElementById('protected-content').style.display = 'block';
                 document.getElementById('password-prompt').style.display = 'none';
+                loadTable();
             } else {
                 alert('パスワードが間違っています。');
             }
@@ -70,6 +71,28 @@
                 rows[i].style.display = match ? '' : 'none';
             }
         }
+
+        async function loadTable() {
+            const response = await fetch('data.json');
+            const data = await response.json();
+
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+
+                const idCell = document.createElement('td');
+                idCell.textContent = item.id;
+                row.appendChild(idCell);
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.name;
+                row.appendChild(nameCell);
+
+                tbody.appendChild(row);
+            });
+        }
     </script>
 </head>
 <body>
@@ -89,14 +112,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>123456</td>
-                    <td>たろう</td>
-                </tr>
-                <tr>
-                    <td>123457</td>
-                    <td>次郎</td>
-                </tr>
+                <!-- データはJavaScriptで動的に挿入されます -->
             </tbody>
         </table>
     </div>
