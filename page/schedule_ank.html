@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>砦と要塞管理</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .copy-button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>砦と要塞管理</h1>
+
+    <table id="fortress-table">
+        <thead>
+            <tr>
+                <th>場所</th>
+                <th>前回取得同盟</th>
+                <th>今回の報酬</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data Rows -->
+        </tbody>
+    </table>
+
+    <button id="execute-button">実行</button>
+    <div id="output-section">
+        <h2>出力結果</h2>
+        <textarea id="output-area" rows="10" cols="50"></textarea>
+        <button class="copy-button" onclick="copyToClipboard()">コピー</button>
+    </div>
+
+    <script>
+        // 初期データ
+        const locations = [
+            "01号砦", "02号砦", "03号砦", "04号砦", "05号砦",
+            "06号砦", "07号砦", "08号砦", "09号砦", "10号砦",
+            "11号砦", "12号砦", "1号要塞", "2号要塞", "3号要塞", "4号要塞"
+        ];
+
+        const rewards = [
+            "1時間一般加速", "上級都市移転", "ジャスミンの欠片", "ジンマンの欠片", "エピック英雄の欠片",
+            "レジェンド探検ブック", "レジェンド遠征ブック", "火晶", "英雄経験値", "英雄装備ラッキー宝箱",
+            "100ポイント強化パーツ", "通常野生の印", "ペット突破材料セレクト", "部隊HP上昇Ⅱ",
+            "部隊ダメージ上昇Ⅱ", "出撃容量上昇Ⅱ"
+        ];
+
+        const tableBody = document.querySelector('#fortress-table tbody');
+
+        // テーブルを初期化
+        locations.forEach(location => {
+            const row = document.createElement('tr');
+
+            // 場所列
+            const locationCell = document.createElement('td');
+            locationCell.textContent = location;
+            row.appendChild(locationCell);
+
+            // 前回取得同盟列
+            const allianceCell = document.createElement('td');
+            const allianceInput = document.createElement('input');
+            allianceInput.type = 'text';
+            allianceCell.appendChild(allianceInput);
+            row.appendChild(allianceCell);
+
+            // 今回の報酬列
+            const rewardCell = document.createElement('td');
+            const rewardSelect = document.createElement('select');
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "--選択--";
+            rewardSelect.appendChild(defaultOption);
+
+            rewards.forEach(reward => {
+                const option = document.createElement('option');
+                option.value = reward;
+                option.textContent = reward;
+                rewardSelect.appendChild(option);
+            });
+            rewardCell.appendChild(rewardSelect);
+            row.appendChild(rewardCell);
+
+            tableBody.appendChild(row);
+        });
+
+        // 実行ボタンの処理
+        document.getElementById('execute-button').addEventListener('click', () => {
+            const output = [];
+
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const location = row.cells[0].textContent;
+                const alliance = row.cells[1].querySelector('input').value || "なし";
+                const reward = row.cells[2].querySelector('select').value;
+
+                if (reward) {
+                    output.push(`${location}(${alliance})${reward}`);
+                }
+            });
+
+            document.getElementById('output-area').value = output.join('\n');
+        });
+
+        // コピー機能
+        function copyToClipboard() {
+            const outputArea = document.getElementById('output-area');
+            outputArea.select();
+            document.execCommand('copy');
+            alert('クリップボードにコピーしました！');
+        }
+    </script>
+</body>
+</html>

@@ -32,10 +32,26 @@
     "dependencies": ""
   },
   {
-    "id": "station_12",
+    "id": "station",
     "name": "防御ST lv4 (時短しました)",
     "start": "2025-01-21 16:21",
     "end": "2025-01-21 17:01",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station",
+    "name": "建築ST lv3 (防衛しました)",
+    "start": "2025-01-21 04:49",
+    "end": "2025-01-22 04:49",
+    "progress": 0,
+    "dependencies": ""
+  },
+  {
+    "id": "station_4",
+    "name": "技術ST lv3 (時短時にEpDから防衛しました)",
+    "start": "2025-01-22 07:41",
+    "end": "2025-01-22 12:39",
     "progress": 0,
     "dependencies": ""
   }
