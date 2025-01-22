@@ -5,14 +5,10 @@
     "start": "2025-01-20 09:00",
     "end": "2025-01-22 09:00",
     "progress": 0,
-    "dependencies": ""
-  },
-  {
-    "id": "tasks_gunbi_1",
-    "name": "軍備競技",
-    "start": "2025-01-24 09:00",
-    "end": "2025-01-26 09:00",
-    "progress": 0,
-    "dependencies": ""
+    "dependencies": "",
+    "repeat": {
+      "interval": 4,
+      "end_date": "2025-12-31"
+    }
   }
 ]
