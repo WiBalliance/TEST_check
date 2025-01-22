@@ -139,7 +139,9 @@
 
                 if (reward) {
                     // 「号砦」と先頭のゼロを削除
+                    console.log(`処理前: ${location}`);
                     const cleanedLocation = location.replace(/(号砦),/g, ",");
+                    console.log(`処理後: ${cleanedLocation}`);
 
                     if (!rewardMap.has(reward)) {
                         rewardMap.set(reward, []);
