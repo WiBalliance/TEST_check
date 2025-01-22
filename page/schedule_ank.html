@@ -139,12 +139,11 @@
 
                 if (reward) {
                     // 「号砦」と先頭のゼロを削除
-                    const cleanedLocation = location.replace(/号砦/g, " ").trim();
+                    const cleanedLocation = location.replace(/号砦,/g, ",").trim();
 
                     if (!rewardMap.has(reward)) {
                         rewardMap.set(reward, []);
                     }
-                    const cleanedLocation = cleanedLocation.replace(/\(/g, /号砦\(/g);
                     rewardMap.get(reward).push({ location: cleanedLocation.replace(/^[0]+/, ""), alliance });
                 }
             });
