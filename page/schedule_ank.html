@@ -139,9 +139,9 @@
 
                 if (reward) {
                     // 「号砦」と先頭のゼロを削除
-                    console.log(`処理前: ${location}`);
-                    // const cleanedLocation = location.replace(/(号砦),/g, ",");
-                    console.log(`処理後: ${cleanedLocation}`);
+                    console.log(`処理前_1: ${location}`);
+                    const cleanedLocation = location.replace(/号砦,/g, ",");
+                    console.log(`処理後_2: ${cleanedLocation}`);
 
                     if (!rewardMap.has(reward)) {
                         rewardMap.set(reward, []);
@@ -157,9 +157,9 @@
                 const locations = entries.map(entry => entry.location).join(",");
                 const alliances = entries.map(entry => entry.alliance).join(",");
                 const line = `${locations}(${alliances})${reward}`;
-                console.log(`処理前: ${line}`);
-                const cleanedLocation = line.replace(/号砦,/g, ",");
-                console.log(`処理後: ${cleanedLocation}`);
+                console.log(`処理前_3: ${line}`);
+                const cleanedline = line.replace(/号砦,/g, ",");
+                console.log(`処理後_4: ${cleanedline}`);
 
                 const outputLine = document.createElement('div');
                 outputLine.className = 'output-line';
