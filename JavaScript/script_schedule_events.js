@@ -193,7 +193,10 @@ document.getElementById("copyButton").addEventListener("click", () => {
     //   const currentDay = Math.floor((targetStartDate - taskStartDate) / (1000 * 60 * 60 * 24)) + 2;
     //   return `${task.name}(${currentDay}日目)`;
     }
-  }).join('\n');
+    return null; // 空の行として扱う
+  })
+  .filter(line => line !== null) // null を取り除く
+  .join('\n');
 
   const textArea = document.createElement("textarea");
   textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
