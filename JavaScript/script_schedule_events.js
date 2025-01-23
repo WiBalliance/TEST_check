@@ -172,34 +172,67 @@ document.getElementById("copyButton").addEventListener("click", () => {
 
   // 開始時刻で昇順にソート
   const sortedTasks = targetTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
-
-  // コピー用テキストを作成
-  const tasksToCopy = sortedTasks.map(task => {
+  
+  // 各コピー用テキストを作成
+  const tasksToCopy_1 = sortedTasks.map(task => {
     const taskStartDate = new Date(task.start);
     const taskEndDate = new Date(task.end);
-
+  
     const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
     const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
     const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
-
-    if (isStartDay) {
-      const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
-      return `${taskStartFormattedTime}~ ${task.name}`;
-    // } else if (isEndDay) {
-    //   const taskEndFormattedTime = `${String(taskEndDate.getHours()).padStart(2, '0')}:${String(taskEndDate.getMinutes()).padStart(2, '0')}`;
-    //   return `~${taskEndFormattedTime} ${task.name}`;
-    // } else if (isMiddleDay) {
-    //   const totalDays = Math.ceil((taskEndDate - taskStartDate) / (1000 * 60 * 60 * 24));
-    //   const currentDay = Math.floor((targetStartDate - taskStartDate) / (1000 * 60 * 60 * 24)) + 2;
-    //   return `${task.name}(${currentDay}日目)`;
+  
+    if (isEndDay) {
+      const taskEndFormattedTime = `${String(taskEndDate.getHours()).padStart(2, '0')}:${String(taskEndDate.getMinutes()).padStart(2, '0')}`;
+      return `~${taskEndFormattedTime} ${task.name}`;
     }
     return null; // 空の行として扱う
   })
   .filter(line => line !== null) // null を取り除く
   .join('\n');
-
+  
+  // コピー用テキストを作成
+  const tasksToCopy_2 = sortedTasks.map(task => {
+    const taskStartDate = new Date(task.start);
+    const taskEndDate = new Date(task.end);
+  
+    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
+    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
+    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
+  
+    if (isStartDay) {
+      const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
+      return `${taskStartFormattedTime}~ ${task.name}`;
+    }
+    return null; // 空の行として扱う
+  })
+  .filter(line => line !== null) // null を取り除く
+  .join('\n');
+  
+  // コピー用テキストを作成
+  const tasksToCopy_3 = sortedTasks.map(task => {
+    const taskStartDate = new Date(task.start);
+    const taskEndDate = new Date(task.end);
+  
+    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
+    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
+    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
+  
+    if (isMiddleDay) {
+      const totalDays = Math.ceil((taskEndDate - taskStartDate) / (1000 * 60 * 60 * 24));
+      const currentDay = Math.floor((targetStartDate - taskStartDate) / (1000 * 60 * 60 * 24)) + 2;
+      return `${task.name}(${currentDay}日目)`;
+    }
+    return null; // 空の行として扱う
+  })
+  .filter(line => line !== null) // null を取り除く
+  .join('\n');
+  
+  // それぞれの結果を連結
+  const finalTasksToCopy = `${tasksToCopy_1}\n${tasksToCopy_2}\n${tasksToCopy_3}`;
+  
   const textArea = document.createElement("textarea");
-  textArea.value = `${formattedDate}のイベント:\n${tasksToCopy}`;
+  textArea.value = `${formattedDate}のイベント:\n${finalTasksToCopy}`;
   document.body.appendChild(textArea);
   textArea.select();
   const successful = document.execCommand('copy');
