@@ -65,83 +65,69 @@
     <script>
         // 初期データ
         const locations = [
-            // 砦
-            "01号砦",
-            "02号砦", 
-            "03号砦", 
-            "04号砦", 
-            "05号砦",
-            "06号砦", 
-            "07号砦", 
-            "08号砦", 
-            "09号砦", 
-            "10号砦",
-            "11号砦", 
-            "12号砦", 
-            // 要塞
-            "1号要塞", 
-            "2号要塞", 
-            "3号要塞", 
-            "4号要塞"
+            "01号砦", "02号砦", "03号砦", "04号砦", "05号砦",
+            "06号砦", "07号砦", "08号砦", "09号砦", "10号砦",
+            "11号砦", "12号砦", "1号要塞", "2号要塞", "3号要塞", "4号要塞"
         ];
 
         const rewards = [
-            "一般加速", 
-            "上級都市移転", 
-            "ジャスミンの欠片", 
-            "ジンマンの欠片", 
-            "エピック英雄の欠片",
-            "探検ブック", 
-            "遠征ブック", 
-            "火晶", 
-            "英雄経験値", 
-            "ラッキー宝箱",
-            "強化パーツ", 
-            "通常野生の印", 
-            "ペットセレクト", 
-            "部隊HP上昇Ⅱ",
-            "部隊ダメージ上昇Ⅱ", 
-            "出撃容量上昇Ⅱ"
+            "一般加速", "上級都市移転", "ジャスミンの欠片", "ジンマンの欠片", "エピック英雄の欠片",
+            "探検ブック", "遠征ブック", "火晶", "英雄経験値", "ラッキー宝箱",
+            "強化パーツ", "通常野生の印", "ペットセレクト", "部隊HP上昇Ⅱ",
+            "部隊ダメージ上昇Ⅱ", "出撃容量上昇Ⅱ"
         ];
 
         const tableBody = document.querySelector('#fortress-table tbody');
 
-        // テーブルを初期化
-        locations.forEach(location => {
-            const row = document.createElement('tr');
+        // JSONから前回取得同盟データを読み込む
+        async function loadPreviousAlliances() {
+            try {
+                const response = await fetch('../list/ank_list.json'); // 外部JSONファイルを指定
+                const previousAlliances = await response.json();
 
-            // 場所列
-            const locationCell = document.createElement('td');
-            locationCell.textContent = location;
-            row.appendChild(locationCell);
+                // テーブルを初期化
+                locations.forEach(location => {
+                    const row = document.createElement('tr');
 
-            // 前回取得同盟列
-            const allianceCell = document.createElement('td');
-            const allianceInput = document.createElement('input');
-            allianceInput.type = 'text';
-            allianceCell.appendChild(allianceInput);
-            row.appendChild(allianceCell);
+                    // 場所列
+                    const locationCell = document.createElement('td');
+                    locationCell.textContent = location;
+                    row.appendChild(locationCell);
 
-            // 今回の報酬列
-            const rewardCell = document.createElement('td');
-            const rewardSelect = document.createElement('select');
+                    // 前回取得同盟列
+                    const allianceCell = document.createElement('td');
+                    const allianceInput = document.createElement('input');
+                    allianceInput.type = 'text';
 
-            const defaultOption = document.createElement('option');
-            defaultOption.value = "";
-            defaultOption.textContent = "--選択--";
-            rewardSelect.appendChild(defaultOption);
+                    // JSONからデータを事前入力
+                    allianceInput.value = previousAlliances[location] || ""; // 該当データがない場合は空白
+                    allianceCell.appendChild(allianceInput);
+                    row.appendChild(allianceCell);
 
-            rewards.forEach(reward => {
-                const option = document.createElement('option');
-                option.value = reward;
-                option.textContent = reward;
-                rewardSelect.appendChild(option);
-            });
-            rewardCell.appendChild(rewardSelect);
-            row.appendChild(rewardCell);
+                    // 今回の報酬列
+                    const rewardCell = document.createElement('td');
+                    const rewardSelect = document.createElement('select');
 
-            tableBody.appendChild(row);
-        });
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = "";
+                    defaultOption.textContent = "--選択--";
+                    rewardSelect.appendChild(defaultOption);
+
+                    rewards.forEach(reward => {
+                        const option = document.createElement('option');
+                        option.value = reward;
+                        option.textContent = reward;
+                        rewardSelect.appendChild(option);
+                    });
+                    rewardCell.appendChild(rewardSelect);
+                    row.appendChild(rewardCell);
+
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('データの読み込みに失敗しました:', error);
+            }
+        }
 
         // 実行ボタンの処理
         document.getElementById('execute-button').addEventListener('click', () => {
@@ -171,7 +157,6 @@
                 const alliances = entries.map(entry => entry.alliance).join(",");
                 const line = `${locations}(${alliances})${reward}`;
                 const cleanedline = line.replace(/号砦,/g, ",");
-                console.log(`処理後_4: ${cleanedline}`);
 
                 const outputLine = document.createElement('div');
                 outputLine.className = 'output-line';
@@ -190,6 +175,11 @@
                 outputArea.appendChild(outputLine);
             });
         });
+
+        // ページロード時にデータを読み込む
+        window.onload = () => {
+            loadPreviousAlliances();
+        };
     </script>
 </body>
 </html>

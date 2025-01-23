@@ -83,7 +83,20 @@
                 const row = document.createElement('tr');
 
                 const idCell = document.createElement('td');
-                idCell.textContent = item.id;
+                const idText = document.createElement('span');
+                idText.textContent = item.id;
+                idCell.appendChild(idText);
+
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'コピー';
+                copyButton.style.marginLeft = '10px';
+                copyButton.onclick = () => {
+                    navigator.clipboard.writeText(item.id)
+                        .then(() => alert('IDがコピーされました: ' + item.id))
+                        .catch(err => alert('コピーに失敗しました: ' + err));
+                };
+                idCell.appendChild(copyButton);
+
                 row.appendChild(idCell);
 
                 const nameCell = document.createElement('td');

@@ -38,5 +38,14 @@
     "end": "2025-01-29 09:00",
     "progress": 0,
     "dependencies": ""
+  },
+ {
+    "id": "tasks_kisetu_events",
+    "name": "【季節】カーシャのお願い屋さん",
+    "start": "2025-01-23 09:00",
+    "end": "2025-01-28 09:00",
+    "progress": 0,
+    "dependencies": ""
   }
+
 ]
