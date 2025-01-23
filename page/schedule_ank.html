@@ -82,7 +82,7 @@
         // JSONから前回取得同盟データを読み込む
         async function loadPreviousAlliances() {
             try {
-                const response = await fetch('../list/ank_list.json'); // 外部JSONファイルを指定
+                const response = await fetch("../list/ank_list.json"); // 外部JSONファイルを指定
                 const previousAlliances = await response.json();
 
                 // テーブルを初期化
