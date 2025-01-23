@@ -190,7 +190,7 @@ document.getElementById("copyButton").addEventListener("click", () => {
       return `~${taskEndFormattedTime} ${task.name}`;
     } else if (isMiddleDay) {
       const totalDays = Math.ceil((taskEndDate - taskStartDate) / (1000 * 60 * 60 * 24));
-      const currentDay = Math.floor((targetStartDate - taskStartDate) / (1000 * 60 * 60 * 24)) + 1;
+      const currentDay = Math.floor((targetStartDate - taskStartDate) / (1000 * 60 * 60 * 24)) + 2;
       return `${task.name}(${currentDay}日目)`;
     }
   }).join('\n');
