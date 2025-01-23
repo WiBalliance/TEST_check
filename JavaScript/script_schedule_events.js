@@ -229,7 +229,7 @@ document.getElementById("copyButton").addEventListener("click", () => {
   .join('\n');
   
   // それぞれの結果を連結
-  const finalTasksToCopy = `${tasksToCopy_1}\n${tasksToCopy_2}\n${tasksToCopy_3}`;
+  const finalTasksToCopy = `"【終了】"\n${tasksToCopy_1}\n"【開始】"\n${tasksToCopy_2}\n"【期間中】"\n${tasksToCopy_3}`;
   // 結果を表示またはコピー
   console.log(tasksToCopy_1);
   console.log(tasksToCopy_2);
