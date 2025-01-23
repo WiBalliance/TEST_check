@@ -33,9 +33,9 @@
   },
   {
     "id": "station_5",
-    "name": "訓練ST lv2 【未取得】",
-    "start": "",
-    "end": "",
+    "name": "訓練ST lv2 【防衛?】",
+    "start": "2025-01-25 21:09",
+    "end": "2025-01-26 21:09",
     "progress": 0,
     "dependencies": ""
   },
@@ -81,9 +81,9 @@
   },
   {
     "id": "station_11",
-    "name": "防御ST lv2 【取り返すぞー】",
-    "start": "2025-01-24 00:09",
-    "end": "2025-01-25 00:09",
+    "name": "防御ST lv2 【防衛】",
+    "start": "2025-01-27 00:40",
+    "end": "2025-01-28 00:40",
     "progress": 0,
     "dependencies": ""
   },
