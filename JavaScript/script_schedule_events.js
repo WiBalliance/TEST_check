@@ -154,15 +154,15 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const targetDate = new Date(selectedDate);
   const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
 
+  const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
+  const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
+
   const targetTasks = allTasks.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
-    
-    // ターゲット日付を基準に、開始時間や終了時間が短い場合でも重なっていればコピー対象にする
-    const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
-    const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
-  
-    return (start < targetEndDate && end > targetStartDate); // 開始日または終了日がターゲット日と重なる場合
+
+    // ターゲット日付と重なる場合
+    return (start <= targetEndDate && end >= targetStartDate);
   });
 
   if (targetTasks.length === 0) {
@@ -176,8 +176,23 @@ document.getElementById("copyButton").addEventListener("click", () => {
   // コピー用テキストを作成
   const tasksToCopy = sortedTasks.map(task => {
     const taskStartDate = new Date(task.start);
-    const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
-    return `${taskStartFormattedTime}~ ${task.name}`;
+    const taskEndDate = new Date(task.end);
+
+    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
+    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
+    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
+
+    if (isStartDay) {
+      const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
+      return `${taskStartFormattedTime}~ ${task.name}`;
+    } else if (isEndDay) {
+      const taskEndFormattedTime = `${String(taskEndDate.getHours()).padStart(2, '0')}:${String(taskEndDate.getMinutes()).padStart(2, '0')}`;
+      return `~${taskEndFormattedTime} ${task.name}`;
+    } else if (isMiddleDay) {
+      const totalDays = Math.ceil((taskEndDate - taskStartDate) / (1000 * 60 * 60 * 24));
+      const currentDay = Math.floor((targetStartDate - taskStartDate) / (1000 * 60 * 60 * 24)) + 1;
+      return `${task.name}(${currentDay}日目)`;
+    }
   }).join('\n');
 
   const textArea = document.createElement("textarea");
