@@ -230,6 +230,11 @@ document.getElementById("copyButton").addEventListener("click", () => {
   
   // それぞれの結果を連結
   const finalTasksToCopy = `${tasksToCopy_1}\n${tasksToCopy_2}\n${tasksToCopy_3}`;
+  // 結果を表示またはコピー
+  console.log(tasksToCopy_1);
+  console.log(tasksToCopy_2);
+  console.log(tasksToCopy_3);
+  console.log(finalTasksToCopy);
   
   const textArea = document.createElement("textarea");
   textArea.value = `${formattedDate}のイベント:\n${finalTasksToCopy}`;
