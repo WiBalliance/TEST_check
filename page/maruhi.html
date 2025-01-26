@@ -20,10 +20,18 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        textarea {
+        textarea, input {
             width: 100%;
-            height: 100px;
             margin-top: 10px;
+        }
+        .member-entry {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .member-entry input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
         }
         button {
             margin: 5px 0;
@@ -42,17 +50,19 @@
 <body>
     <div class="container">
         <h1>チーム振り分けツール</h1>
-        <div>
-            <label for="members">参加者と数値（例: 太郎, 10）:</label>
-            <textarea id="members" placeholder="例:\n太郎, 10\n花子, 20\n次郎, 15"></textarea>
+        <div id="members-container">
+            <label>参加者と数値:</label>
+            <div class="member-entry">
+                <input type="text" class="member-name" placeholder="名前">
+                <input type="number" class="member-value" placeholder="数値" min="0">
+                <label><input type="checkbox" class="is-leader"> リーダー</label>
+                <button type="button" class="remove-member">削除</button>
+            </div>
         </div>
+        <button id="add-member">参加者を追加</button>
         <div>
             <label for="team-count">チーム数:</label>
             <input type="number" id="team-count" min="1" value="2">
-        </div>
-        <div>
-            <label for="leaders">チームリーダー（カンマ区切りで指定）:</label>
-            <input type="text" id="leaders" placeholder="例: 太郎, 花子">
         </div>
         <button id="allocate">チーム振り分け</button>
         <div id="results"></div>
@@ -60,36 +70,55 @@
 
     <script>
         $(document).ready(function() {
-            $('#allocate').on('click', function() {
-                const membersInput = $('#members').val().trim();
-                const teamCount = parseInt($('#team-count').val(), 10);
-                const leadersInput = $('#leaders').val().trim();
+            function updateRemoveButtons() {
+                $('.remove-member').off('click').on('click', function() {
+                    $(this).closest('.member-entry').remove();
+                });
+            }
 
-                if (!membersInput || !teamCount) {
+            $('#add-member').on('click', function() {
+                const newEntry = $(
+                    '<div class="member-entry">' +
+                    '<input type="text" class="member-name" placeholder="名前">' +
+                    '<input type="number" class="member-value" placeholder="数値" min="0">' +
+                    '<label><input type="checkbox" class="is-leader"> リーダー</label>' +
+                    '<button type="button" class="remove-member">削除</button>' +
+                    '</div>'
+                );
+                $('#members-container').append(newEntry);
+                updateRemoveButtons();
+            });
+
+            updateRemoveButtons();
+
+            $('#allocate').on('click', function() {
+                const members = [];
+                $('.member-entry').each(function() {
+                    const name = $(this).find('.member-name').val().trim();
+                    const value = parseInt($(this).find('.member-value').val(), 10);
+                    const isLeader = $(this).find('.is-leader').is(':checked');
+                    if (name && !isNaN(value)) {
+                        members.push({ name, value, isLeader });
+                    }
+                });
+
+                const teamCount = parseInt($('#team-count').val(), 10);
+
+                if (!members.length || !teamCount) {
                     alert('参加者とチーム数を入力してください。');
                     return;
                 }
-
-                const members = membersInput.split('\n').map(line => {
-                    const [name, value] = line.split(',').map(s => s.trim());
-                    return { name, value: parseInt(value, 10) };
-                });
-
-                const leaders = leadersInput ? leadersInput.split(',').map(s => s.trim()) : [];
 
                 members.sort((a, b) => b.value - a.value);
 
                 const teams = Array.from({ length: teamCount }, () => ({ members: [], total: 0 }));
 
-                leaders.forEach(leader => {
-                    const leaderIndex = members.findIndex(member => member.name === leader);
-                    if (leaderIndex !== -1) {
-                        const teamIndex = teams.findIndex(team => team.members.length === 0);
-                        if (teamIndex !== -1) {
-                            teams[teamIndex].members.push(members[leaderIndex]);
-                            teams[teamIndex].total += members[leaderIndex].value;
-                            members.splice(leaderIndex, 1);
-                        }
+                members.filter(member => member.isLeader).forEach(leader => {
+                    const teamIndex = teams.findIndex(team => team.members.length === 0);
+                    if (teamIndex !== -1) {
+                        teams[teamIndex].members.push(leader);
+                        teams[teamIndex].total += leader.value;
+                        members.splice(members.indexOf(leader), 1);
                     }
                 });
 
