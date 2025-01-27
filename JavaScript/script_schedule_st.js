@@ -287,13 +287,27 @@ document.getElementById("copyAllButton").addEventListener("click", () => {
   const sortedTasks = upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
 
   // コピー用テキストを生成
+  // const tasksToCopy = sortedTasks
+  //   .map(task => {
+  //     const taskStartDate = new Date(task.start);
+  //     const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
+  //     return `${taskStartFormattedTime}~ ${task.name}`;
+  //   })
+  //   .join('\n');
+  
   const tasksToCopy = sortedTasks
-    .map(task => {
-      const taskStartDate = new Date(task.start);
-      const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
-      return `${taskStartFormattedTime}~ ${task.name}`;
-    })
-    .join('\n');
+  .map(task => {
+    const taskStartDate = new Date(task.start);
+    const year = taskStartDate.getFullYear();
+    const month = String(taskStartDate.getMonth() + 1).padStart(2, '0'); // 月は0始まり
+    const day = String(taskStartDate.getDate()).padStart(2, '0');
+    const hours = String(taskStartDate.getHours()).padStart(2, '0');
+    const minutes = String(taskStartDate.getMinutes()).padStart(2, '0');
+    
+    const formattedDateTime = `${year}/${month}/${day} ${hours}:${minutes}~`;
+    return `${formattedDateTime} ${task.name}`;
+  })
+  .join('\n');
   
   // 結果を表示またはコピー
   console.log(tasksToCopy);
