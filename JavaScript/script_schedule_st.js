@@ -272,147 +272,38 @@ document.getElementById("copyButton").addEventListener("click", () => {
 
 // 「終了していないイベントをすべてコピーする」ボタンのイベントリスナー
 document.getElementById("copyAllButton").addEventListener("click", () => {
-  const selectedDate = document.getElementById("datePicker").value;
-  if (!selectedDate) {
-    alert("日付を選択してください");
-    return;
-  }
-
-  const targetDate = new Date(selectedDate);
-  const formattedDate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
-
-  const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
-  const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
-
-  const targetTasks = allTasks.filter(task => {
-    const start = new Date(task.start);
+  const now = new Date();
+  const upcomingTasks = allTasks.filter(task => {
     const end = new Date(task.end);
-
-    // ターゲット日付と重なる場合
-    return (start <= targetEndDate && end >= targetStartDate);
+    return end >= now; // 終了していないイベントを取得
   });
 
-  if (targetTasks.length === 0) {
-    alert(`${formattedDate}にはイベントがありません`);
+  if (upcomingTasks.length === 0) {
+    alert("終了していないイベントはありません。");
     return;
   }
 
   // 開始時刻で昇順にソート
-  const sortedTasks = targetTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
-  
-  const now = new Date(); // 現在時刻を取得
-  
-  // 各コピー用テキストを作成
-  const tasksToCopy_1 = sortedTasks
-    .filter(task => new Date(task.start) < now)
-    .filter(task => new Date(task.end) >= now)
+  const sortedTasks = upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+  // コピー用テキストを生成
+  const tasksToCopy = sortedTasks
     .map(task => {
-    const taskStartDate = new Date(task.start);
-    const taskEndDate = new Date(task.end);
-  
-    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
-    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
-    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
-  
-    if (isStartDay) {
+      const taskStartDate = new Date(task.start);
       const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
       return `${taskStartFormattedTime}~ ${task.name}`;
-    }
-    return null; // 空の行として扱う
-  })
-  .filter(line => line !== null) // null を取り除く
-  .join('\n');
+    })
+    .join('\n');
   
-  // コピー用テキストを作成
-  const tasksToCopy_2 = sortedTasks
-    .filter(task => new Date(task.start) > now) // 現在時刻より後のタスクを取得
-    .map(task => {
-    const taskStartDate = new Date(task.start);
-    const taskEndDate = new Date(task.end);
-  
-    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
-    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
-    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
-  
-    if (isStartDay) {
-      const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
-      return `${taskStartFormattedTime}~ ${task.name}`;
-    }
-    return null; // 空の行として扱う
-  })
-  .filter(line => line !== null) // null を取り除く
-  .join('\n');
-
-  // 各コピー用テキストを作成
-  const tasksToCopy_3 = sortedTasks
-    .filter(task => new Date(task.end) <= now) // 現在時刻より前のタスクを取得
-    .map(task => {
-    const taskStartDate = new Date(task.start);
-    const taskEndDate = new Date(task.end);
-  
-    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
-    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
-    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
-  
-    if (isEndDay) {
-      const taskEndFormattedTime = `${String(taskEndDate.getHours()).padStart(2, '0')}:${String(taskEndDate.getMinutes()).padStart(2, '0')}`;
-      return `~${taskEndFormattedTime} ${task.name}`;
-    }
-    return null; // 空の行として扱う
-  })
-  .filter(line => line !== null) // null を取り除く
-  .join('\n');
-  
-  // 各コピー用テキストを作成
-  const tasksToCopy_4 = sortedTasks
-    .map(task => {
-    const taskStartDate = new Date(task.start);
-    const taskEndDate = new Date(task.end);
-  
-    const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
-    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
-    const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
-  
-    if (isEndDay) {
-      const taskEndFormattedTime = `${String(taskEndDate.getHours()).padStart(2, '0')}:${String(taskEndDate.getMinutes()).padStart(2, '0')}`;
-      return `~${taskEndFormattedTime} ${task.name}`;
-    }
-    return null; // 空の行として扱う
-  })
-  .filter(line => line !== null) // null を取り除く
-  .join('\n');  
-  // それぞれの結果を連結
-  // const finalTasksToCopy = `【防衛中】\n${tasksToCopy_1}\n\n【解放時間】\n${tasksToCopy_2}\n\n【終了】\n${tasksToCopy_3}`;
-
-  let finalTasksToCopy = "";
-  // 防衛中セクションを追加
-  if (tasksToCopy_1 !== "") {
-    finalTasksToCopy += `【防衛中】\n${tasksToCopy_1}\n\n`;
-  }
-  if (tasksToCopy_1 == "" && tasksToCopy_4 !== "") {
-    finalTasksToCopy += `【防衛中】\n${tasksToCopy_4}\n\n`;
-  }  // 解放時間セクションを追加
-  if (tasksToCopy_2 !== "") {
-    finalTasksToCopy += `【解放時間】\n${tasksToCopy_2}\n\n`;
-  }
-  // 終了セクションを追加
-  if (tasksToCopy_3 !== "") {
-    finalTasksToCopy += `【終了】\n${tasksToCopy_3}`;
-  }
-
   // 結果を表示またはコピー
-  console.log(tasksToCopy_1);
-  console.log(tasksToCopy_2);
-  console.log(tasksToCopy_3);
-  console.log(tasksToCopy_4);
-  console.log(finalTasksToCopy);
+  console.log(tasksToCopy);
   
   const textArea = document.createElement("textarea");
-  textArea.value = `${formattedDate}のステ戦:\n${finalTasksToCopy}`;
+  textArea.value = `終了していないイベント:\n${tasksToCopy}`;
   document.body.appendChild(textArea);
   textArea.select();
   const successful = document.execCommand('copy');
   document.body.removeChild(textArea);
 
-  alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
+  alert(successful ? "終了していないイベントをコピーしました！" : "コピーに失敗しました。手動でコピーしてください。");
 });
