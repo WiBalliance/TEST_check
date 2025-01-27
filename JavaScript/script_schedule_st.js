@@ -269,3 +269,38 @@ document.getElementById("copyButton").addEventListener("click", () => {
 
   alert(successful ? `${formattedDate}のイベントをコピーしました！` : "コピーに失敗しました。手動でコピーしてください。");
 });
+
+// 「終了していないイベントをすべてコピーする」ボタンのイベントリスナー
+document.getElementById("copyAllButton").addEventListener("click", () => {
+  const now = new Date();
+  const upcomingTasks = allTasks.filter(task => {
+    const end = new Date(task.end);
+    return end >= now; // 終了していないイベントを取得
+  });
+
+  if (upcomingTasks.length === 0) {
+    alert("終了していないイベントはありません。");
+    return;
+  }
+
+  // 開始時刻で昇順にソート
+  const sortedTasks = upcomingTasks.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+  // コピー用テキストを生成
+  const tasksToCopy = sortedTasks
+    .map(task => {
+      const taskStartDate = new Date(task.start);
+      const taskStartFormattedTime = `${String(taskStartDate.getHours()).padStart(2, '0')}:${String(taskStartDate.getMinutes()).padStart(2, '0')}`;
+      return `${taskStartFormattedTime}~ ${task.name}`;
+    })
+    .join('\n');
+
+  const textArea = document.createElement("textarea");
+  textArea.value = `終了していないイベント:\n${tasksToCopy}`;
+  document.body.appendChild(textArea);
+  textArea.select();
+  const successful = document.execCommand('copy');
+  document.body.removeChild(textArea);
+
+  alert(successful ? "終了していないイベントをコピーしました！" : "コピーに失敗しました。手動でコピーしてください。");
+});
