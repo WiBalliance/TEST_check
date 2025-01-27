@@ -67,7 +67,7 @@ const generateRepeatingTasks = (tasks) => {
 const updateGantt = (showCompleted, nameFilter = '') => {
   const now = new Date();
   const twoWeeksLater = new Date();
-  twoWeeksLater.setDate(now.getDate() + 8); // 現在から8日後の日付
+  twoWeeksLater.setDate(now.getDate() + 14); // 現在から14日後の日付
 
   const filteredTasks = allTasks.filter(task => {
     const start = new Date(task.start);
@@ -94,6 +94,8 @@ const loadTasks = async () => {
   const taskFiles = [
     // 終了イベント
     "../tasks/tasks_old.json",                //終了したイベント
+    // 秘宝イベント
+    "../tasks/tasks_hyouketsunohihou.json",   //氷結の秘宝
     // 季節イベント
     "../tasks/tasks_kisetu_events.json",      //季節もののイベント
     // 
@@ -103,6 +105,9 @@ const loadTasks = async () => {
     // 通常イベント
     "../tasks/tasks_hyougennsihaisya.json",   //氷原支配者
     "../tasks/tasks_SvS.json",                //SvS
+    "../tasks/tasks_joe.json",                //クレイジー・ジョイ
+    "../tasks/tasks_takenoko.json",           //燃霜鉱区
+    "../tasks/tasks_yajyu.json",              //野獣駆逐
     "../tasks/tasks_rekkanokiba.json",        //烈火の牙
     "../tasks/tasks_youheinomeiyo.json",      //傭兵の名誉
     "../tasks/tasks_gunbi.json",              //軍備競技
@@ -113,8 +118,8 @@ const loadTasks = async () => {
     "../tasks/tasks_heiki.json",              //兵器工場争奪戦
     "../tasks/tasks_kyoukoku.json",           //峡谷合戦
     "../tasks/tasks_jina.json",               //ジーナの復讐
-    "../tasks/tasks_kuma1.json"               //熊罠1
-    //"../tasks/tasks_kuma2.json"               //熊罠2  未設置
+    "../tasks/tasks_kuma1.json",              //熊罠1
+    "../tasks/tasks_kuma2.json"               //熊罠2
   ];
 
   try {
@@ -179,7 +184,7 @@ document.getElementById("copyButton").addEventListener("click", () => {
     const taskEndDate = new Date(task.end);
   
     const isStartDay = taskStartDate >= targetStartDate && taskStartDate <= targetEndDate;
-    const isEndDay = taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
+    const isEndDay = !isStartDay && taskEndDate >= targetStartDate && taskEndDate <= targetEndDate;
     const isMiddleDay = taskStartDate < targetStartDate && taskEndDate > targetEndDate;
   
     if (isEndDay) {
@@ -229,7 +234,22 @@ document.getElementById("copyButton").addEventListener("click", () => {
   .join('\n');
   
   // それぞれの結果を連結
-  const finalTasksToCopy = `【終了】\n${tasksToCopy_1}\n\n【開始】\n${tasksToCopy_2}\n\n【期間中】\n${tasksToCopy_3}\n`;
+  // const finalTasksToCopy = `【終了】\n${tasksToCopy_1}\n\n【開始】\n${tasksToCopy_2}\n\n【期間中】\n${tasksToCopy_3}\n`;
+  let finalTasksToCopy = "";
+  // 防衛中セクションを追加
+  if (tasksToCopy_1 !== "") {
+    finalTasksToCopy += `【終了】\n${tasksToCopy_1}\n\n`;
+  }
+  if (tasksToCopy_2 !== "") {
+    finalTasksToCopy += `【開始】\n${tasksToCopy_2}\n\n`;
+  }
+  if (tasksToCopy_3 !== "") {
+    finalTasksToCopy += `【期間中】\n${tasksToCopy_3}\n\n`;
+  }
+
+
+
+  
   // 結果を表示またはコピー
   console.log(tasksToCopy_1);
   console.log(tasksToCopy_2);

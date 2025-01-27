@@ -9,10 +9,18 @@
   },
   {
     "id": "tasks_kyoukoku_2",
-    "name": "峡谷合戦 英雄エントリー",
+    "name": "峡谷合戦 エントリー",
     "start": "2025-01-22 09:00",
     "end": "2025-01-24 09:00",
     "progress": 0,
-    "dependencies": "tasks_kyoukoku_1"
+    "dependencies": ""
+  },
+  {
+    "id": "tasks_kyoukoku_3",
+    "name": "峡谷合戦 チーム編成",
+    "start": "2025-01-25 09:00",
+    "end": "2025-01-25 23:00",
+    "progress": 0,
+    "dependencies": ""
   }
 ]
