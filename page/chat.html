@@ -1,37 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="https://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
-	<script src="chat.js"></script>
-	<link rel="stylesheet" href="../CSS/chat.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>チャットアプリ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #chat-container {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      width: 300px;
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+    #message-area {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      border-bottom: 1px solid #ddd;
+    }
+    #message-input {
+      border: none;
+      padding: 10px;
+      flex: 0;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
-
-	<div>
-		<!-- 投稿者 -->
-		<div>
-			<p>ユーザ名</p>
-			<textarea name="" id="jsi-name" cols="10" rows="1"></textarea>
-		</div>
-
-		<!-- メッセージを打ち込む部分 -->
-		<div>
-			<p>内容</p>
-			<textarea name="" id="jsi-msg" cols="30" rows="4"></textarea>
-		</div>
-	</div>
-
-	<!-- メッセージを送る部分 -->
-	<button name="button" id="jsi-button">send message!</button>
-
-	<!-- チャット内容が動的に生成される部分 -->
-	<ul id="jsi-board" style="list-style:none;">
-		<li>〜チャット内容〜</li>
-	</ul>
+  <div id="chat-container">
+    <div id="message-area"></div>
+    <input type="text" id="message-input" placeholder="メッセージを入力">
+    <button id="send-button">送信</button>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const messageArea = document.getElementById('message-area');
+      const messageInput = document.getElementById('message-input');
+      const sendButton = document.getElementById('send-button');
+  
+      sendButton.addEventListener('click', () => {
+        const message = messageInput.value.trim();
+  
+        if (message) {
+          const messageElement = document.createElement('div');
+          messageElement.textContent = message;
+          messageElement.style.marginBottom = '10px';
+          messageArea.appendChild(messageElement);
+  
+          messageInput.value = ''; // 入力欄をクリア
+          messageArea.scrollTop = messageArea.scrollHeight; // スクロールを最下部に
+        }
+      });
+    });
+  </script>
 </body>
-
 </html>
