@@ -89,32 +89,43 @@
                 console.error("❌ Supabaseが初期化されていません");
                 return;
             }
-
+        
             const { data, error } = await supabase
                 .from("comments")
                 .select("*")
                 .order("created_at", { ascending: false });
-
+        
             if (error) {
                 console.error("❌ コメント取得エラー", error);
                 return;
             }
-
+        
+            console.log("✅ コメントデータ取得成功:", data);  // データ確認
+        
             const commentSection = document.getElementById("comments");
             commentSection.innerHTML = "";
-
+        
             if (data.length === 0) {
                 commentSection.innerHTML = "<p>コメントはまだありません。</p>";
                 return;
             }
-
+        
             data.forEach(({ id, name, comment, image_url }) => {
                 const commentDiv = document.createElement("div");
                 commentDiv.classList.add("comment-box");
+        
+                // 画像がある場合にのみ画像を表示
+                let imageHTML = "";
+                if (image_url) {
+                    imageHTML = `<img src="${image_url}" alt="投稿画像">`;
+                }
+        
+                // コメントの内容
                 commentDiv.innerHTML = `
                     <p><strong>${name}</strong>: ${comment} <span class="delete-btn" onclick="deleteComment('${id}')">🗑</span></p>
-                    ${image_url ? `<img src="${image_url}" alt="投稿画像">` : ""}
+                    ${imageHTML}
                 `;
+                
                 commentSection.appendChild(commentDiv);
             });
         }
