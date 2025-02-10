@@ -112,7 +112,7 @@
             let image_url = null;
             if (imageFile) {
                 const { data, error } = await supabase.storage
-                    .from("comments-images")
+                    .from("comment-images")
                     .upload(`public/${imageFile.name}`, imageFile);
 
                 if (error) {
