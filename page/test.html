@@ -94,9 +94,54 @@
                 })
                 .subscribe();
 
-            // 投稿ボタンにイベントリスナーを追加（遅延実行のため）
+            // 投稿ボタンにイベントリスナーを追加
             document.getElementById('submitBtn').addEventListener("click", submitComment);
         });
+
+        // コメント投稿関数
+        async function submitComment() {
+            const name = document.getElementById("name").value.trim();
+            const comment = document.getElementById("comment").value.trim();
+            const imageFile = document.getElementById("image").files[0];
+
+            if (!comment) {
+                alert("コメントを入力してください！");
+                return;
+            }
+
+            let image_url = null;
+            if (imageFile) {
+                const { data, error } = await supabase.storage
+                    .from("comments-images")
+                    .upload(`public/${imageFile.name}`, imageFile);
+
+                if (error) {
+                    console.error("❌ 画像アップロードエラー", error);
+                    return;
+                }
+
+                image_url = data?.Key;
+            }
+
+            const { error } = await supabase
+                .from("comments")
+                .insert([{ name, comment, image_url }]);
+
+            if (error) {
+                console.error("❌ コメント投稿エラー", error);
+                return;
+            }
+
+            console.log("✅ コメント投稿成功");
+
+            // フォームをクリア
+            document.getElementById("name").value = "";
+            document.getElementById("comment").value = "";
+            document.getElementById("image").value = "";
+
+            // 最新のコメントを取得
+            fetchComments();
+        }
 
         async function fetchComments() {
             if (!supabase) {
@@ -235,7 +280,6 @@
             const { error } = await supabase
                 .from("comments")
                 .insert([{ name, comment, parent_comment_id: parentCommentId }]);
-
 
             if (error) {
                 console.error("❌ 返信投稿エラー", error);
