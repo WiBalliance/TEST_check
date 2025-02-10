@@ -93,7 +93,7 @@
             const { data, error } = await supabase
                 .from("comments")
                 .select("*")
-                .order("id", { ascending: false });
+                .order("created_at", { ascending: false });
         
             if (error) {
                 console.error("❌ コメント取得エラー", error);
