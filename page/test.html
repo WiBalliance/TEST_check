@@ -4,6 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>コメント投稿</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .comment-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: left;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+            float: right;
+        }
+    </style>
 </head>
 <body>
     <h2>コメントを投稿</h2>
@@ -22,9 +60,14 @@
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function submitComment() {
-            const name = document.getElementById('name').value || '匿名';
-            const comment = document.getElementById('comment').value;
+            const name = document.getElementById('name').value.trim() || '匿名';
+            const comment = document.getElementById('comment').value.trim();
             const imageInput = document.getElementById('image').files[0];
+
+            if (!comment) {
+                alert("コメントを入力してください");
+                return;
+            }
 
             let imageUrl = null;
             if (imageInput) {
@@ -35,6 +78,7 @@
 
                 if (error) {
                     console.error("画像アップロードエラー", error);
+                    alert("画像のアップロードに失敗しました");
                     return;
                 }
                 imageUrl = `${SUPABASE_URL}/storage/v1/object/public/comment-images/${fileName}`;
@@ -46,9 +90,14 @@
 
             if (error) {
                 console.error("コメント投稿エラー", error);
+                alert("コメントの投稿に失敗しました");
                 return;
             }
+
             alert("投稿完了！");
+            document.getElementById('name').value = "";
+            document.getElementById('comment').value = "";
+            document.getElementById('image').value = "";
             fetchComments();
         }
 
@@ -65,14 +114,33 @@
 
             const commentSection = document.getElementById("comments");
             commentSection.innerHTML = "";
-            data.forEach(({ name, comment, image_url }) => {
+            data.forEach(({ id, name, comment, image_url }) => {
                 const commentDiv = document.createElement("div");
-                commentDiv.innerHTML = `<p><strong>${name}</strong>: ${comment}</p>`;
-                if (image_url) {
-                    commentDiv.innerHTML += `<img src="${image_url}" width="200"><br>`;
-                }
+                commentDiv.classList.add("comment-box");
+                commentDiv.innerHTML = `
+                    <p><strong>${name}</strong>: ${comment} <span class="delete-btn" onclick="deleteComment('${id}')">🗑</span></p>
+                    ${image_url ? `<img src="${image_url}">` : ""}
+                `;
                 commentSection.appendChild(commentDiv);
             });
+        }
+
+        async function deleteComment(id) {
+            if (!confirm("このコメントを削除しますか？")) return;
+
+            const { error } = await supabase
+                .from("comments")
+                .delete()
+                .match({ id });
+
+            if (error) {
+                console.error("削除エラー", error);
+                alert("削除に失敗しました");
+                return;
+            }
+
+            alert("削除完了！");
+            fetchComments();
         }
 
         fetchComments();
