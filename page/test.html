@@ -55,27 +55,39 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  // SupabaseのURL
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  // APIキー
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        document.addEventListener("DOMContentLoaded", async () => {
+            const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
+            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
+    
+            // ✅ Supabaseを明示的に初期化
+            window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+            // ✅ 初回コメント取得
+            fetchComments();
+        });
+    
         async function submitComment() {
+            if (!window.supabase) {
+                console.error("Supabaseが初期化されていません");
+                return;
+            }
+    
             const name = document.getElementById('name').value.trim() || '匿名';
             const comment = document.getElementById('comment').value.trim();
             const imageInput = document.getElementById('image').files[0];
-
+    
             if (!comment) {
                 alert("コメントを入力してください");
                 return;
             }
-
+    
             let imageUrl = null;
             if (imageInput) {
                 const fileName = `${Date.now()}-${imageInput.name}`;
-                const { data, error } = await supabase.storage
+                const { data, error } = await window.supabase.storage
                     .from('comment-images')  
                     .upload(fileName, imageInput);
-
+    
                 if (error) {
                     console.error("画像アップロードエラー", error);
                     alert("画像のアップロードに失敗しました");
@@ -83,35 +95,40 @@
                 }
                 imageUrl = `${SUPABASE_URL}/storage/v1/object/public/comment-images/${fileName}`;
             }
-
-            const { error } = await supabase
+    
+            const { error } = await window.supabase
                 .from("comments")
                 .insert([{ name, comment, image_url: imageUrl }]);
-
+    
             if (error) {
                 console.error("コメント投稿エラー", error);
                 alert("コメントの投稿に失敗しました");
                 return;
             }
-
+    
             alert("投稿完了！");
             document.getElementById('name').value = "";
             document.getElementById('comment').value = "";
             document.getElementById('image').value = "";
             fetchComments();
         }
-
+    
         async function fetchComments() {
-            const { data, error } = await supabase
+            if (!window.supabase) {
+                console.error("Supabaseが初期化されていません");
+                return;
+            }
+    
+            const { data, error } = await window.supabase
                 .from("comments")
                 .select("*")
                 .order("created_at", { ascending: false });
-
+    
             if (error) {
                 console.error("コメント取得エラー", error);
                 return;
             }
-
+    
             const commentSection = document.getElementById("comments");
             commentSection.innerHTML = "";
             data.forEach(({ id, name, comment, image_url }) => {
@@ -124,26 +141,6 @@
                 commentSection.appendChild(commentDiv);
             });
         }
-
-        async function deleteComment(id) {
-            if (!confirm("このコメントを削除しますか？")) return;
-
-            const { error } = await supabase
-                .from("comments")
-                .delete()
-                .match({ id });
-
-            if (error) {
-                console.error("削除エラー", error);
-                alert("削除に失敗しました");
-                return;
-            }
-
-            alert("削除完了！");
-            fetchComments();
-        }
-
-        fetchComments();
     </script>
 </body>
 </html>
