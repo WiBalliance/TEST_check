@@ -59,10 +59,10 @@
             const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
             const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
     
-            // ✅ Supabaseを明示的に初期化
+            // Supabaseを明示的に初期化
             window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-            // ✅ 初回コメント取得
+            // 初回コメント取得
             fetchComments();
         });
     
@@ -122,7 +122,7 @@
             const { data, error } = await window.supabase
                 .from("comments")
                 .select("*")
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false });  // created_atで並び替え
     
             if (error) {
                 console.error("コメント取得エラー", error);
@@ -130,16 +130,35 @@
             }
     
             const commentSection = document.getElementById("comments");
-            commentSection.innerHTML = "";
+            commentSection.innerHTML = "";  // 既存のコメントをクリア
+            
+            if (data.length === 0) {
+                commentSection.innerHTML = "<p>コメントはまだありません。</p>";
+            }
+    
             data.forEach(({ id, name, comment, image_url }) => {
                 const commentDiv = document.createElement("div");
                 commentDiv.classList.add("comment-box");
                 commentDiv.innerHTML = `
                     <p><strong>${name}</strong>: ${comment} <span class="delete-btn" onclick="deleteComment('${id}')">🗑</span></p>
-                    ${image_url ? `<img src="${image_url}">` : ""}
+                    ${image_url ? `<img src="${image_url}" alt="投稿画像">` : ""}
                 `;
                 commentSection.appendChild(commentDiv);
             });
+        }
+    
+        async function deleteComment(id) {
+            const { error } = await window.supabase
+                .from("comments")
+                .delete()
+                .match({ id });
+    
+            if (error) {
+                console.error("コメント削除エラー", error);
+                return;
+            }
+    
+            fetchComments();  // 削除後に再取得
         }
     </script>
 </body>
