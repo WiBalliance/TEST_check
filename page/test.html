@@ -122,7 +122,9 @@
 
                 image_url = data?.Key;
             }
-
+            
+            console.log("✅ アップロードされた画像URL:", image_url);
+            
             const { error } = await supabase
                 .from("comments")
                 .insert([{ name, comment, image_url }]);
