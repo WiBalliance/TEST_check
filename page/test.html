@@ -119,6 +119,63 @@
             });
         }
 
+        async function submitComment() {
+            if (!supabase) {
+                console.error("❌ Supabaseが初期化されていません");
+                return;
+            }
+
+            const name = document.getElementById("name").value.trim();
+            const comment = document.getElementById("comment").value.trim();
+            const imageInput = document.getElementById("image");
+            
+            if (!comment) {
+                alert("コメントを入力してください！");
+                return;
+            }
+
+            let imageUrl = null;
+            
+            // 画像が選択されている場合、Supabaseストレージにアップロード
+            if (imageInput.files.length > 0) {
+                const file = imageInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const filePath = `comments/${Date.now()}.${fileExt}`;
+
+                const { data, error } = await supabase
+                    .storage
+                    .from("uploads")
+                    .upload(filePath, file);
+                
+                if (error) {
+                    console.error("❌ 画像アップロードエラー", error);
+                    return;
+                }
+                
+                imageUrl = `${supabase.storage.from("uploads").getPublicUrl(filePath).data.publicUrl}`;
+            }
+
+            // コメントをデータベースに追加
+            const { error } = await supabase
+                .from("comments")
+                .insert([{ name, comment, image_url: imageUrl }]);
+
+            if (error) {
+                console.error("❌ コメント投稿エラー", error);
+                return;
+            }
+
+            console.log("✅ コメント投稿成功");
+
+            // フォームをクリア
+            document.getElementById("name").value = "";
+            document.getElementById("comment").value = "";
+            document.getElementById("image").value = "";
+
+            // 最新のコメントを取得
+            fetchComments();
+        }
+
         async function deleteComment(id) {
             if (!supabase) {
                 console.error("❌ Supabaseが初期化されていません");
