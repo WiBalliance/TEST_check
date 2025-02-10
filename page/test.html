@@ -84,36 +84,40 @@
             document.getElementById('submitBtn').addEventListener("click", submitComment);
         });
 
-        async function submitComment() {
-            if (!supabase) {
-                console.error("❌ Supabaseが初期化されていません");
+        async function fetchComments() {
+            console.log("🟢 コメントを取得中...");
+        
+            const { data, error } = await supabase
+                .from("comments")
+                .select("*")
+                .order("created_at", { ascending: false });
+        
+            if (error) {
+                console.error("❌ コメント取得エラー:", error);
                 return;
             }
-
-            const name = document.getElementById('name').value.trim() || '匿名';
-            const comment = document.getElementById('comment').value.trim();
-            const imageInput = document.getElementById('image').files[0];
-
-            if (!comment) {
-                alert("コメントを入力してください");
+        
+            console.log("🟢 取得データ:", data);  // ここでデータを確認
+        
+            const commentSection = document.getElementById("comments");
+            commentSection.innerHTML = "";
+        
+            if (data.length === 0) {
+                commentSection.innerHTML = "<p>コメントはまだありません。</p>";
                 return;
             }
+        
+            data.forEach(({ id, name, comment, image_url }) => {
+                const commentDiv = document.createElement("div");
+                commentDiv.classList.add("comment-box");
+                commentDiv.innerHTML = `
+                    <p><strong>${name}</strong>: ${comment} <span class="delete-btn" onclick="deleteComment('${id}')">🗑</span></p>
+                    ${image_url ? `<img src="${image_url}" alt="投稿画像">` : ""}
+                `;
+                commentSection.appendChild(commentDiv);
+            });
+        }
 
-            let imageUrl = null;
-            if (imageInput) {
-                const fileName = `${Date.now()}-${imageInput.name}`;
-                const { data, error } = await supabase
-                    .storage
-                    .from('comment-images')  
-                    .upload(fileName, imageInput);
-
-                if (error) {
-                    console.error("❌ 画像アップロードエラー", error);
-                    alert("画像のアップロードに失敗しました");
-                    return;
-                }
-                imageUrl = `${SUPABASE_URL}/storage/v1/object/public/comment-images/${fileName}`;
-            }
 
             const { error } = await supabase
                 .from("comments")
