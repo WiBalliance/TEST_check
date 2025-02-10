@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コメント投稿</title>
+</head>
+<body>
+    <h2>コメントを投稿</h2>
+    <input type="text" id="name" placeholder="名前（任意）">
+    <textarea id="comment" placeholder="コメントを入力"></textarea>
+    <input type="file" id="image">
+    <button onclick="submitComment()">投稿</button>
+
+    <h2>コメント一覧</h2>
+    <div id="comments"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  // SupabaseのURL
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  // APIキー
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function submitComment() {
+            const name = document.getElementById('name').value || '匿名';
+            const comment = document.getElementById('comment').value;
+            const imageInput = document.getElementById('image').files[0];
+
+            let imageUrl = null;
+            if (imageInput) {
+                const fileName = `${Date.now()}-${imageInput.name}`;
+                const { data, error } = await supabase.storage
+                    .from('comment-images')  
+                    .upload(fileName, imageInput);
+
+                if (error) {
+                    console.error("画像アップロードエラー", error);
+                    return;
+                }
+                imageUrl = `${SUPABASE_URL}/storage/v1/object/public/comment-images/${fileName}`;
+            }
+
+            const { error } = await supabase
+                .from("comments")
+                .insert([{ name, comment, image_url: imageUrl }]);
+
+            if (error) {
+                console.error("コメント投稿エラー", error);
+                return;
+            }
+            alert("投稿完了！");
+            fetchComments();
+        }
+
+        async function fetchComments() {
+            const { data, error } = await supabase
+                .from("comments")
+                .select("*")
+                .order("created_at", { ascending: false });
+
+            if (error) {
+                console.error("コメント取得エラー", error);
+                return;
+            }
+
+            const commentSection = document.getElementById("comments");
+            commentSection.innerHTML = "";
+            data.forEach(({ name, comment, image_url }) => {
+                const commentDiv = document.createElement("div");
+                commentDiv.innerHTML = `<p><strong>${name}</strong>: ${comment}</p>`;
+                if (image_url) {
+                    commentDiv.innerHTML += `<img src="${image_url}" width="200"><br>`;
+                }
+                commentSection.appendChild(commentDiv);
+            });
+        }
+
+        fetchComments();
+    </script>
+</body>
+</html>
