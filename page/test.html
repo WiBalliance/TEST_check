@@ -58,14 +58,14 @@
         document.addEventListener("DOMContentLoaded", async () => {
             const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
             const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
-    
+            
             // Supabaseを明示的に初期化
             window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
             // 初回コメント取得
-            fetchComments();
+            await fetchComments();
         });
-    
+
         async function submitComment() {
             if (!window.supabase) {
                 console.error("Supabaseが初期化されていません");
@@ -110,7 +110,7 @@
             document.getElementById('name').value = "";
             document.getElementById('comment').value = "";
             document.getElementById('image').value = "";
-            fetchComments();
+            await fetchComments();
         }
     
         async function fetchComments() {
@@ -128,14 +128,15 @@
                 console.error("コメント取得エラー", error);
                 return;
             }
-    
+
+            // コメントが取得できた場合のみ処理を行う
             const commentSection = document.getElementById("comments");
             commentSection.innerHTML = "";  // 既存のコメントをクリア
             
             if (data.length === 0) {
                 commentSection.innerHTML = "<p>コメントはまだありません。</p>";
             }
-    
+
             data.forEach(({ id, name, comment, image_url }) => {
                 const commentDiv = document.createElement("div");
                 commentDiv.classList.add("comment-box");
@@ -158,7 +159,7 @@
                 return;
             }
     
-            fetchComments();  // 削除後に再取得
+            await fetchComments();  // 削除後に再取得
         }
     </script>
 </body>
