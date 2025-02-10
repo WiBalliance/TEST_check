@@ -111,17 +111,27 @@
 
             let image_url = null;
             if (imageFile) {
+                console.log("✅ 画像ファイル取得:", imageFile);
+            
+                const filePath = `comments/${imageFile.name}`;
+                console.log("✅ ファイルパス:", filePath);
+            
                 const { data, error } = await supabase.storage
                     .from("comment-images")
-                    .upload(`comments/${imageFile.name}`, imageFile);
-
+                    .upload(filePath, imageFile);
+            
                 if (error) {
                     console.error("❌ 画像アップロードエラー", error);
                     return;
                 }
-
-                image_url = data?.Key;
+            
+                console.log("✅ アップロード成功:", data);
+            
+                // URLを取得
+                image_url = supabase.storage.from("comment-images").getPublicUrl(filePath).data.publicUrl;
+                console.log("✅ 正しい画像URL:", image_url);
             }
+
             
             console.log("✅ アップロードされた画像URL:", image_url);
             
