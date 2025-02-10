@@ -77,7 +77,7 @@
 
             // Supabaseの初期化
             const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";
-            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  // セキュリティに配慮し、キーは公開しない
+            const SUPABASE_KEY = "YOUR_SUPABASE_KEY";  // セキュリティに配慮し、キーは公開しない
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             console.log("✅ Supabase初期化成功");
@@ -192,6 +192,30 @@
             return div;
         }
 
+        // 返信用のHTML要素を生成
+        function createReplyDiv({ id, name, comment, created_at }) {
+            const div = document.createElement("div");
+            div.classList.add("comment-box");
+
+            const jstDate = new Date(created_at);
+            jstDate.setHours(jstDate.getHours() + 9);  // JSTはUTCより9時間進んでいます
+            const formattedDate = jstDate.toLocaleString("ja-JP", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            });
+
+            div.innerHTML = `
+                <p><strong>${name}</strong>: ${comment}</p>
+                <p><small>投稿日時: ${formattedDate}</small></p>
+            `;
+
+            return div;
+        }
+
         // 返信のためのフォームを表示
         function showReplyBox(parentCommentId) {
             const replyBox = document.getElementById(`reply-box-${parentCommentId}`);
@@ -211,6 +235,7 @@
             const { error } = await supabase
                 .from("comments")
                 .insert([{ name, comment, parent_comment_id: parentCommentId }]);
+
 
             if (error) {
                 console.error("❌ 返信投稿エラー", error);
