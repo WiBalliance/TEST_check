@@ -48,7 +48,7 @@
     <input type="text" id="name" placeholder="名前（任意）">
     <textarea id="comment" placeholder="コメントを入力"></textarea>
     <input type="file" id="image">
-    <button onclick="submitComment()">投稿</button>
+    <button id="submitBtn">投稿</button>
 
     <h2>コメント一覧</h2>
     <div id="comments"></div>
@@ -56,11 +56,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
         // Supabaseの設定
-        const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabase;  // グローバル変数を定義
 
         document.addEventListener("DOMContentLoaded", async () => {
+            console.log("✅ Supabase初期化中...");
+
+            // Supabaseの初期化を確実に行う
+            const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
+            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIiwi...";
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            
             console.log("✅ Supabase初期化成功");
 
             // 初回コメント取得
@@ -74,9 +79,17 @@
                     fetchComments();
                 })
                 .subscribe();
+
+            // 投稿ボタンにイベントリスナーを追加（遅延実行のため）
+            document.getElementById('submitBtn').addEventListener("click", submitComment);
         });
 
         async function submitComment() {
+            if (!supabase) {
+                console.error("❌ Supabaseが初期化されていません");
+                return;
+            }
+
             const name = document.getElementById('name').value.trim() || '匿名';
             const comment = document.getElementById('comment').value.trim();
             const imageInput = document.getElementById('image').files[0];
@@ -95,7 +108,7 @@
                     .upload(fileName, imageInput);
 
                 if (error) {
-                    console.error("画像アップロードエラー", error);
+                    console.error("❌ 画像アップロードエラー", error);
                     alert("画像のアップロードに失敗しました");
                     return;
                 }
@@ -107,7 +120,7 @@
                 .insert([{ name, comment, image_url: imageUrl }]);
 
             if (error) {
-                console.error("コメント投稿エラー", error);
+                console.error("❌ コメント投稿エラー", error);
                 alert("コメントの投稿に失敗しました");
                 return;
             }
@@ -120,13 +133,18 @@
         }
 
         async function fetchComments() {
+            if (!supabase) {
+                console.error("❌ Supabaseが初期化されていません");
+                return;
+            }
+
             const { data, error } = await supabase
                 .from("comments")
                 .select("*")
                 .order("created_at", { ascending: false });
 
             if (error) {
-                console.error("コメント取得エラー", error);
+                console.error("❌ コメント取得エラー", error);
                 return;
             }
 
@@ -150,13 +168,18 @@
         }
 
         async function deleteComment(id) {
+            if (!supabase) {
+                console.error("❌ Supabaseが初期化されていません");
+                return;
+            }
+
             const { error } = await supabase
                 .from("comments")
                 .delete()
                 .match({ id });
 
             if (error) {
-                console.error("コメント削除エラー", error);
+                console.error("❌ コメント削除エラー", error);
                 return;
             }
 
