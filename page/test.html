@@ -55,39 +55,33 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
+        const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         document.addEventListener("DOMContentLoaded", async () => {
-            const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
-            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
-            
-            // Supabaseを明示的に初期化
-            window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-            // 初回コメント取得
-            await fetchComments();
+            await fetchComments(); // 初回データ取得
+            listenForComments();   // リアルタイム更新
         });
 
         async function submitComment() {
-            if (!window.supabase) {
-                console.error("Supabaseが初期化されていません");
-                return;
-            }
-    
             const name = document.getElementById('name').value.trim() || '匿名';
             const comment = document.getElementById('comment').value.trim();
             const imageInput = document.getElementById('image').files[0];
-    
+
             if (!comment) {
                 alert("コメントを入力してください");
                 return;
             }
-    
+
             let imageUrl = null;
             if (imageInput) {
                 const fileName = `${Date.now()}-${imageInput.name}`;
-                const { data, error } = await window.supabase.storage
+                const { error } = await supabase.storage
                     .from('comment-images')  
                     .upload(fileName, imageInput);
-    
+
                 if (error) {
                     console.error("画像アップロードエラー", error);
                     alert("画像のアップロードに失敗しました");
@@ -95,46 +89,43 @@
                 }
                 imageUrl = `${SUPABASE_URL}/storage/v1/object/public/comment-images/${fileName}`;
             }
-    
-            const { error } = await window.supabase
+
+            const { error } = await supabase
                 .from("comments")
                 .insert([{ name, comment, image_url: imageUrl }]);
-    
+
             if (error) {
                 console.error("コメント投稿エラー", error);
                 alert("コメントの投稿に失敗しました");
                 return;
             }
-    
-            alert("投稿完了！");
+
             document.getElementById('name').value = "";
             document.getElementById('comment').value = "";
             document.getElementById('image').value = "";
-            await fetchComments();
         }
-    
+
         async function fetchComments() {
-            if (!window.supabase) {
-                console.error("Supabaseが初期化されていません");
-                return;
-            }
-    
-            const { data, error } = await window.supabase
+            const { data, error } = await supabase
                 .from("comments")
                 .select("*")
-                .order("created_at", { ascending: false });  // created_atで並び替え
-    
+                .order("created_at", { ascending: false });
+
             if (error) {
                 console.error("コメント取得エラー", error);
                 return;
             }
 
-            // コメントが取得できた場合のみ処理を行う
+            renderComments(data);
+        }
+
+        function renderComments(data) {
             const commentSection = document.getElementById("comments");
-            commentSection.innerHTML = "";  // 既存のコメントをクリア
-            
+            commentSection.innerHTML = "";
+
             if (data.length === 0) {
                 commentSection.innerHTML = "<p>コメントはまだありません。</p>";
+                return;
             }
 
             data.forEach(({ id, name, comment, image_url }) => {
@@ -147,19 +138,44 @@
                 commentSection.appendChild(commentDiv);
             });
         }
-    
+
         async function deleteComment(id) {
-            const { error } = await window.supabase
+            const { error } = await supabase
                 .from("comments")
                 .delete()
                 .match({ id });
-    
+
             if (error) {
                 console.error("コメント削除エラー", error);
                 return;
             }
-    
-            await fetchComments();  // 削除後に再取得
+        }
+
+        function listenForComments() {
+            supabase
+                .channel('realtime-comments')
+                .on(
+                    'postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'comments' },
+                    (payload) => {
+                        console.log("新しいコメント:", payload.new);
+                        addCommentToDOM(payload.new);
+                    }
+                )
+                .subscribe();
+        }
+
+        function addCommentToDOM(commentData) {
+            const commentSection = document.getElementById("comments");
+
+            const commentDiv = document.createElement("div");
+            commentDiv.classList.add("comment-box");
+            commentDiv.innerHTML = `
+                <p><strong>${commentData.name}</strong>: ${commentData.comment} <span class="delete-btn" onclick="deleteComment('${commentData.id}')">🗑</span></p>
+                ${commentData.image_url ? `<img src="${commentData.image_url}" alt="投稿画像">` : ""}
+            `;
+
+            commentSection.prepend(commentDiv);
         }
     </script>
 </body>
