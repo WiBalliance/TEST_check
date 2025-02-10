@@ -167,7 +167,7 @@
 
                 const { data, error } = await supabase
                     .storage
-                    .from("uploads")
+                    .from("comment-images")
                     .upload(filePath, file);
                 
                 if (error) {
@@ -175,7 +175,7 @@
                     return;
                 }
                 
-                imageUrl = `${supabase.storage.from("uploads").getPublicUrl(filePath).data.publicUrl}`;
+                imageUrl = `${supabase.storage.from("comment-images").getPublicUrl(filePath).data.publicUrl}`;
             }
 
             // コメントをデータベースに追加
