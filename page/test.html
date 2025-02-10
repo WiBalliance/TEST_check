@@ -55,14 +55,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
+        // Supabaseの設定
         const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";  
-        
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         document.addEventListener("DOMContentLoaded", async () => {
-            await fetchComments(); // 初回データ取得
-            listenForComments();   // リアルタイム更新
+            console.log("✅ Supabase初期化成功");
+
+            // 初回コメント取得
+            await fetchComments();
+
+            // リアルタイムリスナーをセット
+            supabase
+                .channel('comments')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, payload => {
+                    console.log("📢 リアルタイム更新:", payload);
+                    fetchComments();
+                })
+                .subscribe();
         });
 
         async function submitComment() {
@@ -78,7 +89,8 @@
             let imageUrl = null;
             if (imageInput) {
                 const fileName = `${Date.now()}-${imageInput.name}`;
-                const { error } = await supabase.storage
+                const { data, error } = await supabase
+                    .storage
                     .from('comment-images')  
                     .upload(fileName, imageInput);
 
@@ -103,6 +115,8 @@
             document.getElementById('name').value = "";
             document.getElementById('comment').value = "";
             document.getElementById('image').value = "";
+
+            console.log("✅ コメント投稿成功");
         }
 
         async function fetchComments() {
@@ -116,10 +130,6 @@
                 return;
             }
 
-            renderComments(data);
-        }
-
-        function renderComments(data) {
             const commentSection = document.getElementById("comments");
             commentSection.innerHTML = "";
 
@@ -149,33 +159,8 @@
                 console.error("コメント削除エラー", error);
                 return;
             }
-        }
 
-        function listenForComments() {
-            supabase
-                .channel('realtime-comments')
-                .on(
-                    'postgres_changes', 
-                    { event: 'INSERT', schema: 'public', table: 'comments' },
-                    (payload) => {
-                        console.log("新しいコメント:", payload.new);
-                        addCommentToDOM(payload.new);
-                    }
-                )
-                .subscribe();
-        }
-
-        function addCommentToDOM(commentData) {
-            const commentSection = document.getElementById("comments");
-
-            const commentDiv = document.createElement("div");
-            commentDiv.classList.add("comment-box");
-            commentDiv.innerHTML = `
-                <p><strong>${commentData.name}</strong>: ${commentData.comment} <span class="delete-btn" onclick="deleteComment('${commentData.id}')">🗑</span></p>
-                ${commentData.image_url ? `<img src="${commentData.image_url}" alt="投稿画像">` : ""}
-            `;
-
-            commentSection.prepend(commentDiv);
+            console.log("✅ コメント削除成功");
         }
     </script>
 </body>
