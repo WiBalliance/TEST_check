@@ -42,12 +42,19 @@
             float: right;
         }
         .reply-btn {
-            color: #007bff;
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
             cursor: pointer;
-        }
-        .reply-form {
             margin-top: 10px;
-            text-align: left;
+        }
+        .reply-btn:hover {
+            background-color: #0056b3;
+        }
+        .reply-box {
+            margin-left: 30px;
+            margin-top: 10px;
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -63,16 +70,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Supabaseの設定
-        let supabase;  
+        let supabase;
 
         document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Supabase初期化中...");
 
-            const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";  
-            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcnhnZXFsdWdrY3JqdGZyaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxNTY2MzMsImV4cCI6MjA1NDczMjYzM30.IXG4URkGeFczILNnBscckZ-O96rJPrysWs63EiljlUg";
+            // Supabaseの初期化
+            const SUPABASE_URL = "https://adrxgeqlugkcrjtfrhtu.supabase.co";
+            const SUPABASE_KEY = "your-supabase-key-here";  // セキュリティに配慮し、キーは公開しない
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            
+
             console.log("✅ Supabase初期化成功");
 
             // 初回コメント取得
@@ -87,11 +94,10 @@
                 })
                 .subscribe();
 
-            // 投稿ボタンにイベントリスナーを追加
+            // 投稿ボタンにイベントリスナーを追加（遅延実行のため）
             document.getElementById('submitBtn').addEventListener("click", submitComment);
         });
 
-        // コメント一覧の取得
         async function fetchComments() {
             if (!supabase) {
                 console.error("❌ Supabaseが初期化されていません");
@@ -118,128 +124,93 @@
                 return;
             }
 
-            data.forEach(({ id, name, comment, image_url, created_at, parent_comment_id }) => {
-                const commentDiv = document.createElement("div");
-                commentDiv.classList.add("comment-box");
+            // 親コメントとその返信を表示
+            const groupedComments = groupCommentsByParentId(data);
 
-                // 画像がある場合にのみ画像を表示
-                let imageHTML = "";
-                if (image_url) {
-                    imageHTML = `<img src="${image_url}" alt="投稿画像">`;
-                }
+            groupedComments.forEach(({ parentComment, replies }) => {
+                const parentCommentDiv = createCommentDiv(parentComment);
+                commentSection.appendChild(parentCommentDiv);
 
-                // UTCからJSTへの変換
-                const jstDate = new Date(created_at);
-                jstDate.setHours(jstDate.getHours() + 9); 
-                const formattedDate = jstDate.toLocaleString("ja-JP", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
+                replies.forEach(reply => {
+                    const replyCommentDiv = createReplyDiv(reply);
+                    parentCommentDiv.appendChild(replyCommentDiv);
                 });
-
-                // コメントの内容
-                commentDiv.innerHTML = `
-                    <p><strong>${name}</strong>: ${comment} <span class="delete-btn" onclick="deleteComment('${id}')">🗑</span></p>
-                    <p><small>投稿日時: ${formattedDate}</small></p>
-                    ${imageHTML}
-                    <span class="reply-btn" onclick="showReplyForm('${id}')">返信</span>
-                `;
-
-                // 返信フォーム
-                const replyForm = document.createElement("div");
-                replyForm.classList.add("reply-form");
-                replyForm.id = `reply-form-${id}`;
-                replyForm.innerHTML = `
-                    <input type="text" id="reply-name-${id}" placeholder="名前（任意）">
-                    <textarea id="reply-comment-${id}" placeholder="返信コメントを入力"></textarea>
-                    <button onclick="submitReply('${id}')">返信</button>
-                `;
-
-                commentDiv.appendChild(replyForm);
-                commentSection.appendChild(commentDiv);
             });
         }
 
-        // コメント投稿
-        async function submitComment() {
-            if (!supabase) {
-                console.error("❌ Supabaseが初期化されていません");
-                return;
-            }
+        // コメントの親子関係を整理
+        function groupCommentsByParentId(comments) {
+            const commentMap = new Map();
+            const groupedComments = [];
 
-            const name = document.getElementById("name").value.trim();
-            const comment = document.getElementById("comment").value.trim();
-            const imageInput = document.getElementById("image");
+            comments.forEach(comment => {
+                if (comment.parent_comment_id) {
+                    // 親コメントの下に返信を追加
+                    if (!commentMap.has(comment.parent_comment_id)) {
+                        commentMap.set(comment.parent_comment_id, []);
+                    }
+                    commentMap.get(comment.parent_comment_id).push(comment);
+                } else {
+                    // 親コメントを追加
+                    groupedComments.push({ parentComment: comment, replies: commentMap.get(comment.id) || [] });
+                }
+            });
+
+            return groupedComments;
+        }
+
+        // コメントを表示するためのHTML要素を生成
+        function createCommentDiv({ id, name, comment, image_url, created_at }) {
+            const div = document.createElement("div");
+            div.classList.add("comment-box");
+
+            const imageHTML = image_url ? `<img src="${image_url}" alt="投稿画像">` : "";
+
+            const jstDate = new Date(created_at);
+            jstDate.setHours(jstDate.getHours() + 9);  // JSTはUTCより9時間進んでいます
+            const formattedDate = jstDate.toLocaleString("ja-JP", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            });
+
+            div.innerHTML = `
+                <p><strong>${name}</strong>: ${comment} <span class="delete-btn" onclick="deleteComment('${id}')">🗑</span></p>
+                <p><small>投稿日時: ${formattedDate}</small></p>
+                ${imageHTML}
+                <button class="reply-btn" onclick="showReplyBox('${id}')">返信</button>
+                <div id="reply-box-${id}" class="reply-box" style="display:none;">
+                    <input type="text" id="reply-name-${id}" placeholder="名前（任意）">
+                    <textarea id="reply-comment-${id}" placeholder="返信コメント"></textarea>
+                    <button onclick="submitReply('${id}')">返信投稿</button>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // 返信のためのフォームを表示
+        function showReplyBox(parentCommentId) {
+            const replyBox = document.getElementById(`reply-box-${parentCommentId}`);
+            replyBox.style.display = "block";
+        }
+
+        // 返信コメントを投稿
+        async function submitReply(parentCommentId) {
+            const name = document.getElementById(`reply-name-${parentCommentId}`).value.trim();
+            const comment = document.getElementById(`reply-comment-${parentCommentId}`).value.trim();
 
             if (!comment) {
-                alert("コメントを入力してください！");
-                return;
-            }
-
-            let imageUrl = null;
-            if (imageInput.files.length > 0) {
-                const file = imageInput.files[0];
-                const fileExt = file.name.split('.').pop();
-                const filePath = `comments/${Date.now()}.${fileExt}`;
-
-                const { data, error } = await supabase
-                    .storage
-                    .from("comment-images")
-                    .upload(filePath, file);
-                
-                if (error) {
-                    console.error("❌ 画像アップロードエラー", error);
-                    return;
-                }
-                
-                imageUrl = `${supabase.storage.from("comment-images").getPublicUrl(filePath).data.publicUrl}`;
-            }
-
-            const { error } = await supabase
-                .from("comments")
-                .insert([{ name, comment, image_url: imageUrl }]);
-
-            if (error) {
-                console.error("❌ コメント投稿エラー", error);
-                return;
-            }
-
-            console.log("✅ コメント投稿成功");
-            document.getElementById("name").value = "";
-            document.getElementById("comment").value = "";
-            document.getElementById("image").value = "";
-
-            fetchComments();
-        }
-
-        // 返信フォームを表示
-        function showReplyForm(commentId) {
-            const replyForm = document.getElementById(`reply-form-${commentId}`);
-            replyForm.style.display = replyForm.style.display === "none" ? "block" : "none";
-        }
-
-        // 返信投稿
-        async function submitReply(commentId) {
-            const replyName = document.getElementById(`reply-name-${commentId}`).value.trim();
-            const replyComment = document.getElementById(`reply-comment-${commentId}`).value.trim();
-
-            if (!replyComment) {
                 alert("返信コメントを入力してください！");
                 return;
             }
 
             const { error } = await supabase
                 .from("comments")
-                .insert([
-                    {
-                        name: replyName,
-                        comment: replyComment,
-                        parent_comment_id: commentId
-                    }
-                ]);
+                .insert([{ name, comment, parent_comment_id: parentCommentId }]);
 
             if (error) {
                 console.error("❌ 返信投稿エラー", error);
@@ -248,11 +219,21 @@
 
             console.log("✅ 返信投稿成功");
 
+            // フォームをクリア
+            document.getElementById(`reply-name-${parentCommentId}`).value = "";
+            document.getElementById(`reply-comment-${parentCommentId}`).value = "";
+
+            // 最新のコメントを取得
             fetchComments();
         }
 
-        // コメント削除
+        // コメントを削除
         async function deleteComment(id) {
+            if (!supabase) {
+                console.error("❌ Supabaseが初期化されていません");
+                return;
+            }
+
             const { error } = await supabase
                 .from("comments")
                 .delete()
@@ -264,6 +245,7 @@
             }
 
             console.log("✅ コメント削除成功");
+
             fetchComments();
         }
     </script>
