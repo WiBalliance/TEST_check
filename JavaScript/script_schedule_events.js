@@ -40,7 +40,7 @@ const generateRepeatingTasks = (tasks) => {
 
     const taskStartDate = new Date(task.start).toDateString();
     const taskEndDate = new Date(task.end).toDateString();
-    const key = `${groupId}_${taskStartDate}`;
+    const key = `${groupId}`;
 
     if (!groupedTasks[key]) groupedTasks[key] = [];
     groupedTasks[key].push(task);
