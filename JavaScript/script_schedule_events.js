@@ -181,16 +181,6 @@ const updateCalendar = (calendar) => {
   });
 };
 
-const updateTaskList = (listEl) => {
-  listEl.innerHTML = '';
-  allTasks.forEach(task => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `${task.name} (${task.start} - ${task.end || task.start})`;
-    listEl.appendChild(listItem);
-  });
-};
-
-
 
 loadTasks(); // ファイルの読み込みを開始
 
