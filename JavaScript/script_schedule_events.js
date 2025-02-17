@@ -35,15 +35,10 @@ const generateRepeatingTasks = (tasks) => {
   const groupedTasks = {};
 
   tasks.forEach(task => {
-    const groupId = task.name;
+    const groupId = task.name;  // タスク名のみをグループIDとする
+
     if (!groupedTasks[groupId]) groupedTasks[groupId] = [];
-
-    const taskStartDate = new Date(task.start).toDateString();
-    const taskEndDate = new Date(task.end).toDateString();
-    const key = `${groupId}`;
-
-    if (!groupedTasks[key]) groupedTasks[key] = [];
-    groupedTasks[key].push(task);
+    groupedTasks[groupId].push(task);
 
     if (task.repeat) {
       const interval = task.repeat.interval;
@@ -51,16 +46,13 @@ const generateRepeatingTasks = (tasks) => {
       let currentStartDate = new Date(task.start);
       let currentEndDate = new Date(task.end);
 
-      // 繰り返しを生成
       while (true) {
         currentStartDate.setDate(currentStartDate.getDate() + interval);
         currentEndDate.setDate(currentEndDate.getDate() + interval);
 
         if (currentStartDate > repeatEndDate) break;
 
-        const repeatKey = `${groupId}_${currentStartDate.toDateString()}`;
-        if (!groupedTasks[repeatKey]) groupedTasks[repeatKey] = [];
-        groupedTasks[repeatKey].push({
+        groupedTasks[groupId].push({
           ...task,
           id: `${task.id}_repeat_${currentStartDate.toISOString()}`,
           start: currentStartDate.toISOString(),
@@ -76,6 +68,7 @@ const generateRepeatingTasks = (tasks) => {
 
   return expandedTasks;
 };
+
 
 // ガントチャートを更新する関数
 const updateGantt = (showCompleted, nameFilter = '') => {
