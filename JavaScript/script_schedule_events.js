@@ -49,12 +49,16 @@ const loadTasks = async (calendar, listEl) => {
   ];
 
   try {
+    const now = new Date();
     const tasksData = await Promise.all(taskFiles.map(({ file, group }) =>
       fetch(file).then(response => response.json()).then(tasks => ({ group, tasks }))
     ));
 
     allTasks = tasksData.reduce((acc, { group, tasks }) => {
-      acc[group] = tasks;
+      acc[group] = tasks.filter(task => {
+        const endDate = new Date(task.end || task.start);
+        return endDate >= now || task.repeat;
+      });
       return acc;
     }, {});
 
@@ -91,6 +95,12 @@ const updateTaskList = (listEl) => {
     tasks.forEach(task => {
       const listItem = document.createElement('li');
       listItem.textContent = `${task.name} (${task.start} - ${task.end || task.start})`;
+      
+      const copyButton = document.createElement('button');
+      copyButton.textContent = 'Copy';
+      copyButton.onclick = () => navigator.clipboard.writeText(task.name).then(() => alert('Copied!'));
+      
+      listItem.appendChild(copyButton);
       groupList.appendChild(listItem);
     });
     listEl.appendChild(groupList);
