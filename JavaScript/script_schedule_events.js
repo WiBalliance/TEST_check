@@ -32,9 +32,12 @@ const updateTaskProgress = (tasks) => {
 // 繰り返しタスクを展開する関数
 const generateRepeatingTasks = (tasks) => {
   const expandedTasks = [];
+  const groupedTasks = {};
 
   tasks.forEach(task => {
-    expandedTasks.push(task); // 元のタスクを追加
+    const groupId = task.name;
+    if (!groupedTasks[groupId]) groupedTasks[groupId] = [];
+    groupedTasks[groupId].push(task);
 
     if (task.repeat) {
       const interval = task.repeat.interval;
@@ -49,8 +52,7 @@ const generateRepeatingTasks = (tasks) => {
 
         if (currentStartDate > repeatEndDate) break;
 
-        // 繰り返しタスクを追加
-        expandedTasks.push({
+        groupedTasks[groupId].push({
           ...task,
           id: `${task.id}_repeat_${currentStartDate.toISOString()}`,
           start: currentStartDate.toISOString(),
@@ -58,6 +60,12 @@ const generateRepeatingTasks = (tasks) => {
         });
       }
     }
+  });
+
+  Object.values(groupedTasks).forEach(group => {
+    const minStart = new Date(Math.min(...group.map(t => new Date(t.start))));
+    const maxEnd = new Date(Math.max(...group.map(t => new Date(t.end))));
+    expandedTasks.push({ ...group[0], start: minStart.toISOString(), end: maxEnd.toISOString() });
   });
 
   return expandedTasks;
