@@ -32,21 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
       right: 'dayGridMonth,timeGridWeek,listWeek'
     },
     events: []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   });
   calendar.render();
   loadTasks(calendar, listEl);
@@ -88,6 +73,14 @@ const generateRepeatingTasks = (tasks) => {
   return expandedTasks;
 };
 
+// ガントチャートのタスクデータを更新する関数
+const updateTaskProgress = (tasks) => {
+  return tasks.map(task => {
+    const progress = calculateProgress(task);
+    return { ...task, progress, custom_class: getProgressClass(progress) };
+  });
+};
+
 // ガントチャートを更新する関数
 const updateTaskList = (showCompleted, nameFilter = '') => {
   const now = new Date();
@@ -113,10 +106,6 @@ const updateTaskList = (showCompleted, nameFilter = '') => {
     editable: false
   });
 };
-
-
-
-
 
 const loadTasks = async (calendar, listEl) => {
 
