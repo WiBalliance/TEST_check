@@ -88,6 +88,31 @@ const generateRepeatingTasks = (tasks) => {
   return expandedTasks;
 };
 
+// ガントチャートを更新する関数
+const updateTaskList = (showCompleted, nameFilter = '') => {
+  const now = new Date();
+  const twoWeeksLater = new Date();
+  twoWeeksLater.setDate(now.getDate() + 20); // 現在から20日後の日付
+
+  const filteredTasks = allTasks.filter(task => {
+    const start = new Date(task.start);
+    const end = new Date(task.end);
+    const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
+
+    // 条件: 過去のタスクまたは2週間以上先のタスクを除外
+    return (showCompleted || end >= now) && start <= twoWeeksLater && matchesName;
+  });
+
+  // タスクデータに進捗率とカスタムクラスを追加
+  const tasksWithProgress = updateTaskProgress(filteredTasks);
+
+  // ガントチャートを描画
+  const gantt = new Gantt("#gantt", tasksWithProgress, {
+    view_mode: "Day",
+    date_format: "YYYY/MM/DD HH:mm",
+    editable: false
+  });
+};
 
 
 
@@ -137,7 +162,7 @@ const loadTasks = async (calendar, listEl) => {
       fetch(file).then(response => response.json())
     ));
     allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
-    updateTaskList(listEl);
+    updateTaskList(false);
   } catch (error) {
     console.error('Error loading tasks:', error);
   }
