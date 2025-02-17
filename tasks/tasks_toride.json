@@ -1,0 +1,38 @@
+[
+  {
+    "id": "tasks_toride_1",
+    "name": "砦争奪戦 アンケート",
+    "start": "2025-01-21 09:00",
+    "end": "2025-01-23 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 7,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_toride_2",
+    "name": "砦争奪戦 申請",
+    "start": "2025-01-22 09:00",
+    "end": "2025-01-24 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 7,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_toride_2",
+    "name": "砦争奪戦 本戦",
+    "start": "2025-01-24 18:00",
+    "end": "2025-01-24 23:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 7,
+      "end_date": "2099-12-31"
+    }
+  }
+]

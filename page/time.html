@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時間計算ツール</title>
+    <style>
+        #copyButton {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>時間計算</h1>
+    <p>あと</p>
+    <form id="timeForm">
+        <label for="days">日:</label>
+        <input type="number" id="days" name="days" min="0" value="0"> 日<br><br>
+        <label for="hours">時間:</label>
+        <input type="number" id="hours" name="hours" min="0" value="0"> 時間<br><br>
+        <label for="minutes">分:</label>
+        <input type="number" id="minutes" name="minutes" min="0" value="0"> 分<br><br>
+        <button type="submit">計算</button>
+    </form>
+    <h2>計算結果</h2>
+    <p id="result">計算結果は....</p>
+    <button id="copyButton">コピー</button>
+
+    <script>
+        document.getElementById('timeForm').addEventListener('submit', (event) => {
+            event.preventDefault(); // フォーム送信によるリロードを防ぐ
+
+            // 入力値を取得
+            const days = parseInt(document.getElementById('days').value) || 0;
+            const hours = parseInt(document.getElementById('hours').value) || 0;
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+
+            // 現在の日時を取得
+            const now = new Date();
+
+            // 日、時間、分を現在時刻に加算
+            now.setDate(now.getDate() + days);
+            now.setHours(now.getHours() + hours);
+            now.setMinutes(now.getMinutes() + minutes);
+
+            // 計算結果をフォーマット
+            const result = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}頃`;
+
+            // 結果を表示
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = result;
+
+            // コピー用ボタンを表示
+            const copyButton = document.getElementById('copyButton');
+            copyButton.style.display = 'inline-block';
+        });
+
+        // コピー機能
+        document.getElementById('copyButton').addEventListener('click', () => {
+            const resultText = document.getElementById('result').textContent;
+
+            // テキストをクリップボードにコピー
+            navigator.clipboard.writeText(resultText)
+                .then(() => {
+                    alert('結果がコピーされました: ' + resultText);
+                })
+                .catch((err) => {
+                    alert('コピーに失敗しました: ' + err);
+                });
+        });
+    </script>
+</body>
+</html>

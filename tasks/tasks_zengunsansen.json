@@ -1,0 +1,14 @@
+[
+  {
+    "id": "tasks_taiyoujou",
+    "name": "全軍参戦",
+    "start": "2025-02-14 09:00",
+    "end": "2025-02-16 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 14,
+      "end_date": "2099-12-31"
+    }
+  }
+]

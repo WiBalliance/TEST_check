@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チーム分け</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .team {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea, input {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .member-entry {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .member-entry input[type="text"] {
+            flex: 2; /* 名前の入力フィールドを広く */
+            margin-right: 10px;
+        }
+        .member-entry input[type="number"] {
+            flex: 1; /* 数値の入力フィールドを狭く */
+        }
+        button {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>チーム振り分けツール</h1>
+        <div id="members-container">
+            <label>参加者と総力:</label>
+            <div class="member-entry">
+                <input type="text" class="member-name" placeholder="名前">
+                <input type="number" class="member-value" placeholder="総力" min="0">
+                <label><input type="checkbox" class="is-leader"> リーダー</label>
+                <button type="button" class="remove-member">削除</button>
+            </div>
+        </div>
+        <button id="add-member">参加者を追加</button>
+        <div>
+            <label for="team-count">チーム数:</label>
+            <input type="number" id="team-count" min="1" value="2">
+        </div>
+        <button id="allocate">チーム振り分け</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function updateRemoveButtons() {
+                $('.remove-member').off('click').on('click', function() {
+                    $(this).closest('.member-entry').remove();
+                });
+            }
+
+            $('#add-member').on('click', function() {
+                const newEntry = $(
+                    '<div class="member-entry">' +
+                    '<input type="text" class="member-name" placeholder="名前">' +
+                    '<input type="number" class="member-value" placeholder="総力" min="0">' +
+                    '<label><input type="checkbox" class="is-leader"> リーダー</label>' +
+                    '<button type="button" class="remove-member">削除</button>' +
+                    '</div>'
+                );
+                $('#members-container').append(newEntry);
+                updateRemoveButtons();
+            });
+
+            updateRemoveButtons();
+
+            $('#allocate').on('click', function() {
+                const members = [];
+                $('.member-entry').each(function() {
+                    const name = $(this).find('.member-name').val().trim();
+                    const value = parseInt($(this).find('.member-value').val(), 10);
+                    const isLeader = $(this).find('.is-leader').is(':checked');
+                    if (name && !isNaN(value)) {
+                        members.push({ name, value, isLeader });
+                    }
+                });
+
+                const teamCount = parseInt($('#team-count').val(), 10);
+
+                if (!members.length || !teamCount) {
+                    alert('参加者とチーム数を入力してください。');
+                    return;
+                }
+
+                members.sort((a, b) => b.value - a.value);
+
+                const teams = Array.from({ length: teamCount }, () => ({ members: [], total: 0 }));
+
+                members.filter(member => member.isLeader).forEach(leader => {
+                    const teamIndex = teams.findIndex(team => team.members.length === 0);
+                    if (teamIndex !== -1) {
+                        teams[teamIndex].members.push(leader);
+                        teams[teamIndex].total += leader.value;
+                        members.splice(members.indexOf(leader), 1);
+                    }
+                });
+
+                members.forEach(member => {
+                    const team = teams.reduce((prev, current) => prev.total < current.total ? prev : current);
+                    team.members.push(member);
+                    team.total += member.value;
+                });
+
+                $('#results').empty();
+                teams.forEach((team, index) => {
+                    const teamDiv = $('<div class="team"></div>').append(`<h3>チーム ${index + 1}</h3>`);
+                    team.members.forEach(member => {
+                        teamDiv.append(`<p>${member.name} (${member.value})</p>`);
+                    });
+                    teamDiv.append(`<p><strong>合計: ${team.total}</strong></p>`);
+                    $('#results').append(teamDiv);
+                });
+
+                const copyText = teams.map((team, index) => {
+                    return `チーム ${index + 1}:\n` + team.members.map(member => `${member.name} (${member.value})`).join('\n');
+                }).join('\n\n');
+
+                const copyArea = $('<textarea></textarea>').val(copyText).appendTo('#results');
+                const copyButton = $('<button>結果をコピー</button>').appendTo('#results');
+
+                copyButton.on('click', function() {
+                    copyArea.select();
+                    document.execCommand('copy');
+                    alert('結果をコピーしました。');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

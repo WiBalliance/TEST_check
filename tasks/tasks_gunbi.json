@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tasks_gunbi",
+    "name": "軍備競技",
+    "start": "2025-02-03 09:00",
+    "end": "2025-02-05 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 14,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_gunbi",
+    "name": "軍備競技",
+    "start": "2025-02-07 09:00",
+    "end": "2025-02-09 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 14,
+      "end_date": "2099-12-31"
+    }
+  }
+]

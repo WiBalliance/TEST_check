@@ -1,0 +1,26 @@
+[
+  {
+    "id": "",
+    "name": "雪原行商",
+    "start": "2025-02-03 09:00",
+    "end": "2025-02-09 13:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "",
+    "name": "同盟大作戦",
+    "start": "2025-02-03 09:00",
+    "end": "2025-02-09 21:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  }
+]

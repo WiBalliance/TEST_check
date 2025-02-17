@@ -1,0 +1,98 @@
+[
+  {
+    "id": "tasks_SvS_1",
+    "name": "最強王国(マッチングフェーズ)",
+    "start": "2025-01-25 09:00",
+    "end": "2025-01-26 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_2",
+    "name": "最強王国 準備フェーズ1",
+    "start": "2025-01-27 09:00",
+    "end": "2025-01-28 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_3",
+    "name": "最強王国 準備フェーズ2",
+    "start": "2025-01-28 09:00",
+    "end": "2025-01-29 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_4",
+    "name": "最強王国 準備フェーズ3",
+    "start": "2025-01-29 09:00",
+    "end": "2025-01-30 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_5",
+    "name": "最強王国 準備フェーズ4",
+    "start": "2025-01-30 09:00",
+    "end": "2025-01-31 09:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_6",
+    "name": "最強王国 準備フェーズ5",
+    "start": "2025-01-31 09:00",
+    "end": "2025-02-01 19:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_7",
+    "name": "最強王国 戦争フェーズ",
+    "start": "2025-02-01 20:00",
+    "end": "2025-02-02 03:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  },
+  {
+    "id": "tasks_SvS_7",
+    "name": "最強王国 略奪時間",
+    "start": "2025-02-01 19:00",
+    "end": "2025-02-02 07:00",
+    "progress": 0,
+    "dependencies": "",
+    "repeat": {
+      "interval": 28,
+      "end_date": "2099-12-31"
+    }
+  }
+]
