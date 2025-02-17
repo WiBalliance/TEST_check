@@ -32,9 +32,18 @@ const updateTaskProgress = (tasks) => {
 // 繰り返しタスクを展開する関数
 const generateRepeatingTasks = (tasks) => {
   const expandedTasks = [];
+  const groupedTasks = {};
 
   tasks.forEach(task => {
-    expandedTasks.push({ ...task, group_id: task.id }); // 元のタスクを追加
+    const groupId = task.name;
+    if (!groupedTasks[groupId]) groupedTasks[groupId] = [];
+
+    const taskStartDate = new Date(task.start).toDateString();
+    const taskEndDate = new Date(task.end).toDateString();
+    const key = `${groupId}_${taskStartDate}`;
+
+    if (!groupedTasks[key]) groupedTasks[key] = [];
+    groupedTasks[key].push(task);
 
     if (task.repeat) {
       const interval = task.repeat.interval;
@@ -49,20 +58,24 @@ const generateRepeatingTasks = (tasks) => {
 
         if (currentStartDate > repeatEndDate) break;
 
-        // 繰り返しタスクを追加（IDを統一）
-        expandedTasks.push({
+        const repeatKey = `${groupId}_${currentStartDate.toDateString()}`;
+        if (!groupedTasks[repeatKey]) groupedTasks[repeatKey] = [];
+        groupedTasks[repeatKey].push({
           ...task,
+          id: `${task.id}_repeat_${currentStartDate.toISOString()}`,
           start: currentStartDate.toISOString(),
-          end: currentEndDate.toISOString(),
-          group_id: task.id // 追加: グループ化用のID
+          end: currentEndDate.toISOString()
         });
       }
     }
   });
 
+  Object.values(groupedTasks).forEach(group => {
+    expandedTasks.push(...group);
+  });
+
   return expandedTasks;
 };
-
 
 // ガントチャートを更新する関数
 const updateGantt = (showCompleted, nameFilter = '') => {
@@ -82,27 +95,13 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   // タスクデータに進捗率とカスタムクラスを追加
   const tasksWithProgress = updateTaskProgress(filteredTasks);
 
-  // タスクをIDごとにグループ化
-  const groupedTasks = tasksWithProgress.reduce((acc, task) => {
-    if (!acc[task.group_id]) acc[task.group_id] = [];
-    acc[task.group_id].push(task);
-    return acc;
-  }, {});
-
-  // 1つのタスクごとに1つのエントリーにまとめる
-  const finalTasks = Object.values(groupedTasks).map(group => ({
-    ...group[0], // 先頭のタスクをベースにする
-    start: group[0].start,
-    end: group[group.length - 1].end // 最後のタスクの終了時刻を適用
-  }));
   // ガントチャートを描画
-  const gantt = new Gantt("#gantt", finalTasks, {
+  const gantt = new Gantt("#gantt", tasksWithProgress, {
     view_mode: "Day",
     date_format: "YYYY/MM/DD HH:mm",
     editable: false
   });
 };
-
 
 // 複数のJSONファイルを読み込む関数
 const loadTasks = async () => {
