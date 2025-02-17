@@ -284,10 +284,6 @@ document.getElementById("copyButton").addEventListener("click", () => {
   if (tasksToCopy_3 !== "") {
     finalTasksToCopy += `【期間中】\n${tasksToCopy_3}\n\n`;
   }
-
-
-
-  
   // 結果を表示またはコピー
   console.log(tasksToCopy_1);
   console.log(tasksToCopy_2);
