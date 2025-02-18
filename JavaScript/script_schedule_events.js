@@ -113,16 +113,3 @@ const loadTasks = async () => {
 };
 
 loadTasks(); // ファイルの読み込みを開始
-
-// チェックボックスのイベントリスナー
-document.getElementById("showCompleted").addEventListener("change", (event) => {
-  const nameFilter = document.getElementById("taskNameFilter").value;
-  updateCalendar(event.target.checked, nameFilter);
-});
-
-// タスク名でフィルタするイベントリスナー
-document.getElementById("taskNameFilter").addEventListener("input", (event) => {
-  const nameFilter = event.target.value;
-  const showCompleted = document.getElementById("showCompleted").checked;
-  updateCalendar(showCompleted, nameFilter);
-});
