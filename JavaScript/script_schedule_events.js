@@ -98,7 +98,7 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
     initialView: viewMode, // 初期ビューを引数で変更
     initialDate: new Date().toISOString().split("T")[0],
     height: 2000,
-    contentHeight: 3000,
+    contentHeight: 4000,
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
