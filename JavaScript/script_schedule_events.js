@@ -15,10 +15,11 @@ const calculateProgress = (task) => {
 
 // 進捗率に応じて背景色を設定する関数
 const getProgressColor = (progress) => {
-  if (progress <= 25) return "#ffcccc";
-  if (progress <= 50) return "#ffe066";
+  if (progress = 0) return "#dedcdc";
+  if (progress <= 25) return "#66ccff";
+  if (progress <= 50) return "#66ccff";
   if (progress <= 75) return "#66ccff";
-  return "#dedcdc";
+  return "#676669";
 };
 
 // 繰り返しタスクを展開する関数
@@ -71,11 +72,18 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
   // FullCalendar 用のイベントデータを作成
   const calendarEvents = filteredTasks.map(task => {
     const progress = calculateProgress(task);
+    const startDate = new Date(task.start);
+    const endDate = new Date(task.end);
+
+    // 時間情報があるか判定
+    const hasTime = startDate.getHours() !== 0 || startDate.getMinutes() !== 0 || 
+                    endDate.getHours() !== 0 || endDate.getMinutes() !== 0;
+
     return {
       title: `${task.name} (${progress}%)`, // タスク名に進捗率を表示
       start: task.start,
       end: task.end,
-      allDay: true,
+      allDay: !hasTime, // 時間が指定されている場合は allDay を false にする
       backgroundColor: getProgressColor(progress),
       borderColor: getProgressColor(progress)
     };
@@ -96,7 +104,6 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
 
   calendar.render();
 };
-
 
 // 複数のJSONファイルを読み込む関数
 const loadTasks = async () => {
