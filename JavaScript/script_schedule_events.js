@@ -42,6 +42,15 @@ const updateCalendar = (showCompleted, nameFilter = '') => {
     return;
   }
 
+  // タスクをフィルタリング
+  const now = new Date();
+  const filteredTasks = allTasks.filter(task => {
+    const end = new Date(task.end);
+    const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
+
+    return (showCompleted || end >= now) && matchesName;
+  });
+
   // FullCalendar 用のイベントデータを作成
   const calendarEvents = filteredTasks.map(task => ({
     title: task.name,
@@ -104,3 +113,16 @@ const loadTasks = async () => {
 };
 
 loadTasks(); // ファイルの読み込みを開始
+
+// チェックボックスのイベントリスナー
+document.getElementById("showCompleted").addEventListener("change", (event) => {
+  const nameFilter = document.getElementById("taskNameFilter").value;
+  updateCalendar(event.target.checked, nameFilter);
+});
+
+// タスク名でフィルタするイベントリスナー
+document.getElementById("taskNameFilter").addEventListener("input", (event) => {
+  const nameFilter = event.target.value;
+  const showCompleted = document.getElementById("showCompleted").checked;
+  updateCalendar(showCompleted, nameFilter);
+});
