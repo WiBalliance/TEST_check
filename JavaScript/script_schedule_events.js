@@ -15,10 +15,11 @@ const calculateProgress = (task) => {
 
 // 進捗率に応じて背景色を設定する関数
 const getProgressColor = (progress) => {
-  if (progress = 0) return "#dedcdc";
   if (progress <= 25) return "#66ccff";
   if (progress <= 50) return "#66ccff";
   if (progress <= 75) return "#66ccff";
+  if (progress = 0) return "#dedcdc";
+  if (progress = 100) return "#676669";
   return "#676669";
 };
 
@@ -80,7 +81,8 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
                     endDate.getHours() !== 0 || endDate.getMinutes() !== 0;
 
     return {
-      title: `${task.name} (${progress}%)`, // タスク名に進捗率を表示
+      // title: `${task.name} (${progress}%)`, // タスク名に進捗率を表示
+      title: `${task.name}`, // タスク名に進捗率を表示
       start: task.start,
       end: task.end,
       allDay: !hasTime, // 時間が指定されている場合は allDay を false にする
