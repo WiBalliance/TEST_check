@@ -35,7 +35,7 @@ const generateRepeatingTasks = (tasks) => {
 };
 
 // カレンダーを更新する関数
-const updateCalendar = (showCompleted, nameFilter = '') => {
+const updateCalendar = (nameFilter = '') => {
   const calendarEl = document.getElementById('calendar');
   if (!calendarEl) {
     console.error("カレンダーのコンテナが見つかりません。");
@@ -43,13 +43,9 @@ const updateCalendar = (showCompleted, nameFilter = '') => {
   }
 
   // タスクをフィルタリング
-  const now = new Date();
-  const filteredTasks = allTasks.filter(task => {
-    const end = new Date(task.end);
-    const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-
-    return (showCompleted || end >= now) && matchesName;
-  });
+  const filteredTasks = allTasks.filter(task => 
+    task.name.toLowerCase().includes(nameFilter.toLowerCase())
+  );
 
   // FullCalendar 用のイベントデータを作成
   const calendarEvents = filteredTasks.map(task => ({
@@ -106,7 +102,7 @@ const loadTasks = async () => {
       fetch(file).then(response => response.json())
     ));
     allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
-    updateCalendar(false); // 初期表示
+    updateCalendar(); // 初期表示
   } catch (error) {
     console.error('タスクの読み込みエラー:', error);
   }
@@ -114,15 +110,8 @@ const loadTasks = async () => {
 
 loadTasks(); // ファイルの読み込みを開始
 
-// チェックボックスのイベントリスナー
-document.getElementById("showCompleted").addEventListener("change", (event) => {
-  const nameFilter = document.getElementById("taskNameFilter").value;
-  updateCalendar(event.target.checked, nameFilter);
-});
-
 // タスク名でフィルタするイベントリスナー
 document.getElementById("taskNameFilter").addEventListener("input", (event) => {
   const nameFilter = event.target.value;
-  const showCompleted = document.getElementById("showCompleted").checked;
-  updateCalendar(showCompleted, nameFilter);
+  updateCalendar(nameFilter);
 });
