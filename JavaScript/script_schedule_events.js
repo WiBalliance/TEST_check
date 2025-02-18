@@ -15,10 +15,10 @@ const calculateProgress = (task) => {
 
 // 進捗率に応じて背景色を設定する関数
 const getProgressColor = (progress) => {
-  if (progress <= 25) return #ffcccc;
-  if (progress <= 50) return #66ccff;
-  if (progress <= 75) return #ffe066;
-  return #66ff66;
+  if (progress <= 25) return ffcccc;
+  if (progress <= 50) return 66ccff;
+  if (progress <= 75) return ffe066;
+  return 66ff66;
 };
 
 // 繰り返しタスクを展開する関数
