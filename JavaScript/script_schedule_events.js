@@ -1,74 +1,74 @@
-// let allTasks = []; // すべてのタスクデータを保持。
+let allTasks = []; // すべてのタスクデータを保持
 
-document.addEventListener("DOMContentLoaded", function () {
-  var calendarEl = document.getElementById("calendar");
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
-    locale: "ja",
-    headerToolbar: {
-      left: "prev,next today",
-      center: "title",
-      right: "dayGridMonth,timeGridWeek,timeGridDay",
-    },
-    events: function (fetchInfo, successCallback, failureCallback) {
-      successCallback(generateCalendarEvents(allTasks));
-    },
+// 繰り返しタスクを展開する関数
+const generateRepeatingTasks = (tasks) => {
+  const expandedTasks = [];
+
+  tasks.forEach(task => {
+    expandedTasks.push(task); // 元のタスクを追加
+
+    if (task.repeat) {
+      const interval = task.repeat.interval;
+      const repeatEndDate = new Date(task.repeat.end_date);
+      let currentStartDate = new Date(task.start);
+      let currentEndDate = new Date(task.end);
+
+      // 繰り返しタスクを生成
+      while (true) {
+        currentStartDate.setDate(currentStartDate.getDate() + interval);
+        currentEndDate.setDate(currentEndDate.getDate() + interval);
+
+        if (currentStartDate > repeatEndDate) break;
+
+        // 繰り返しタスクを追加
+        expandedTasks.push({
+          ...task,
+          id: `${task.id}_repeat_${currentStartDate.toISOString()}`,
+          start: currentStartDate.toISOString(),
+          end: currentEndDate.toISOString()
+        });
+      }
+    }
   });
+
+  return expandedTasks;
+};
+
+// カレンダーを更新する関数
+const updateCalendar = (showCompleted, nameFilter = '') => {
+  const calendarEl = document.getElementById('calendar');
+  if (!calendarEl) {
+    console.error("カレンダーのコンテナが見つかりません。");
+    return;
+  }
+
+  // タスクをフィルタリング
+  const now = new Date();
+  const filteredTasks = allTasks.filter(task => {
+    const end = new Date(task.end);
+    const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
+
+    return (showCompleted || end >= now) && matchesName;
+  });
+
+  // FullCalendar 用のイベントデータを作成
+  const calendarEvents = filteredTasks.map(task => ({
+    title: task.name,
+    start: task.start,
+    end: task.end,
+    allDay: true
+  }));
+
+  // カレンダーを描画
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    events: calendarEvents
+  });
+
   calendar.render();
-
-  document.getElementById("showCompleted").addEventListener("change", () => {
-    calendar.refetchEvents();
-  });
-
-  document.getElementById("taskNameFilter").addEventListener("input", () => {
-    calendar.refetchEvents();
-  });
-});
-
-// タスクデータをカレンダー形式に変換
-const generateCalendarEvents = (tasks) => {
-  const nameFilter = document.getElementById("taskNameFilter").value.toLowerCase();
-  const showCompleted = document.getElementById("showCompleted").checked;
-  const now = new Date();
-
-  return tasks
-    .filter((task) => {
-      const start = new Date(task.start);
-      const end = new Date(task.end);
-      const matchesName = task.name.toLowerCase().includes(nameFilter);
-      return (showCompleted || end >= now) && matchesName;
-    })
-    .map((task) => ({
-      id: task.id,
-      title: task.name,
-      start: task.start,
-      end: task.end,
-      color: getTaskColor(task),
-    }));
 };
 
-// 進捗率に応じた色を設定
-const getTaskColor = (task) => {
-  const progress = calculateProgress(task);
-  if (progress <= 25) return "#ffadad";
-  if (progress <= 50) return "#ffd6a5";
-  if (progress <= 75) return "#fdffb6";
-  return "#caffbf";
-};
-
-// 進捗率を計算
-const calculateProgress = (task) => {
-  const now = new Date();
-  const start = new Date(task.start);
-  const end = new Date(task.end);
-  const totalDuration = end - start;
-  const elapsedTime = now - start;
-  if (elapsedTime < 0) return 0;
-  if (elapsedTime > totalDuration) return 100;
-  return Math.floor((elapsedTime / totalDuration) * 100);
-};
-
-// タスクデータの読み込み
+// 複数のJSONファイルを読み込む関数
 const loadTasks = async () => {
   const taskFiles = [
     "../tasks/tasks_old.json",
@@ -98,16 +98,31 @@ const loadTasks = async () => {
     "../tasks/tasks_herbester.json",
     "../tasks/tasks_akatsukinotenbou.json",
     "../tasks/tasks_kuma1.json",
-    "../tasks/tasks_kuma2.json",
+    "../tasks/tasks_kuma2.json"
   ];
 
   try {
-    const tasks = await Promise.all(
-      taskFiles.map((file) => fetch(file).then((response) => response.json()))
-    );
+    const tasks = await Promise.all(taskFiles.map(file =>
+      fetch(file).then(response => response.json())
+    ));
+    allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
+    updateCalendar(false); // 初期表示
   } catch (error) {
-    console.error("Error loading tasks:", error);
+    console.error('タスクの読み込みエラー:', error);
   }
 };
 
-loadTasks();
+loadTasks(); // ファイルの読み込みを開始
+
+// チェックボックスのイベントリスナー
+document.getElementById("showCompleted").addEventListener("change", (event) => {
+  const nameFilter = document.getElementById("taskNameFilter").value;
+  updateCalendar(event.target.checked, nameFilter);
+});
+
+// タスク名でフィルタするイベントリスナー
+document.getElementById("taskNameFilter").addEventListener("input", (event) => {
+  const nameFilter = event.target.value;
+  const showCompleted = document.getElementById("showCompleted").checked;
+  updateCalendar(showCompleted, nameFilter);
+});
