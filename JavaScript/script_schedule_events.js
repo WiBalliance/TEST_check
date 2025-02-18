@@ -1,5 +1,26 @@
 let allTasks = []; // すべてのタスクデータを保持
 
+// 進捗率を計算する関数
+const calculateProgress = (task) => {
+  const now = new Date();
+  const start = new Date(task.start);
+  const end = new Date(task.end);
+  const totalDuration = end - start;
+  const elapsedTime = now - start;
+
+  if (elapsedTime < 0) return 0; // タスクがまだ開始されていない場合
+  if (elapsedTime > totalDuration) return 100; // タスクが完了した場合
+  return Math.floor((elapsedTime / totalDuration) * 100); // 小数点以下切り捨て
+};
+
+// 進捗率に応じて背景色を設定する関数
+const getProgressColor = (progress) => {
+  if (progress <= 25) return "red";
+  if (progress <= 50) return "orange";
+  if (progress <= 75) return "yellow";
+  return "green";
+};
+
 // 繰り返しタスクを展開する関数
 const generateRepeatingTasks = (tasks) => {
   const expandedTasks = [];
@@ -48,12 +69,17 @@ const updateCalendar = (nameFilter = '') => {
   );
 
   // FullCalendar 用のイベントデータを作成
-  const calendarEvents = filteredTasks.map(task => ({
-    title: task.name,
-    start: task.start,
-    end: task.end,
-    allDay: true
-  }));
+  const calendarEvents = filteredTasks.map(task => {
+    const progress = calculateProgress(task);
+    return {
+      title: `${task.name} (${progress}%)`, // タスク名に進捗率を表示
+      start: task.start,
+      end: task.end,
+      allDay: true,
+      backgroundColor: getProgressColor(progress), // 進捗率に応じた色設定
+      borderColor: getProgressColor(progress) // 境界線の色も統一
+    };
+  });
 
   // カレンダーを描画
   const calendar = new FullCalendar.Calendar(calendarEl, {
