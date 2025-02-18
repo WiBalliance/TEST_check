@@ -61,6 +61,9 @@
   </div>  
   <div>
     <input type="text" id="taskNameFilter" placeholder="タスク名で検索">
+    <button onclick="updateCalendar(document.getElementById('taskNameFilter').value, 'dayGridMonth')">月</button>
+    <button onclick="updateCalendar(document.getElementById('taskNameFilter').value, 'timeGridWeek')">週</button>
+    <button onclick="updateCalendar(document.getElementById('taskNameFilter').value, 'listWeek')">リスト</button>
   </div>
 
   <div id="calendar"></div>
