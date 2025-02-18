@@ -105,7 +105,6 @@ const loadTasks = async () => {
     const tasks = await Promise.all(
       taskFiles.map((file) => fetch(file).then((response) => response.json()))
     );
-//     allTasks = tasks.flat();
   } catch (error) {
     console.error("Error loading tasks:", error);
   }
