@@ -42,15 +42,6 @@ const updateCalendar = (showCompleted, nameFilter = '') => {
     return;
   }
 
-  // タスクをフィルタリング
-  const now = new Date();
-  const filteredTasks = allTasks.filter(task => {
-    const end = new Date(task.end);
-    const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
-
-    return (showCompleted || end >= now) && matchesName;
-  });
-
   // FullCalendar 用のイベントデータを作成
   const calendarEvents = filteredTasks.map(task => ({
     title: task.name,
