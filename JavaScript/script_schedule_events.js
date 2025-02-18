@@ -10,8 +10,8 @@ const CalendarComponent = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const gunbiResponse = await fetch("tasks_gunbi.json");
-      const kisetuResponse = await fetch("tasks_kisetu_events.json");
+      const gunbiResponse = await fetch("../tasks/tasks_gunbi.json");
+      const kisetuResponse = await fetch("../tasks/tasks_kisetu_events.json");
       const gunbiData = await gunbiResponse.json();
       const kisetuData = await kisetuResponse.json();
       
