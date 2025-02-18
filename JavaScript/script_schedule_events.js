@@ -1,4 +1,4 @@
-let allTasks = []; // すべてのタスクデータを保持
+let allTasks = []; // すべてのタスクデータを保持。
 
 document.addEventListener("DOMContentLoaded", function () {
   var calendarEl = document.getElementById("calendar");
