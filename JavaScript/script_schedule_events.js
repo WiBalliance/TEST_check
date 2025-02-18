@@ -101,7 +101,8 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,listWeek' // 月・週・リストの切り替え
     },
-    events: calendarEvents
+    events: calendarEvents,
+    eventDisplay: "block" // イベントをブロック表示（時間を非表示）
   });
 
   calendar.render();
