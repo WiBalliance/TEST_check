@@ -96,6 +96,9 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
 
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: viewMode, // 初期ビューを引数で変更
+    initialDate: new Date().toISOString().split("T")[0],
+    height: 600,
+    contentHeight: 600,
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
