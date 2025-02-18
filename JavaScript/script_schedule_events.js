@@ -56,7 +56,7 @@ const generateRepeatingTasks = (tasks) => {
 };
 
 // カレンダーを更新する関数
-const updateCalendar = (nameFilter = '') => {
+const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
   const calendarEl = document.getElementById('calendar');
   if (!calendarEl) {
     console.error("カレンダーのコンテナが見つかりません。");
@@ -76,19 +76,27 @@ const updateCalendar = (nameFilter = '') => {
       start: task.start,
       end: task.end,
       allDay: true,
-      backgroundColor: getProgressColor(progress), // 進捗率に応じた色設定
-      borderColor: getProgressColor(progress) // 境界線の色も統一
+      backgroundColor: getProgressColor(progress),
+      borderColor: getProgressColor(progress)
     };
   });
 
-  // カレンダーを描画
+  // 既存のカレンダーを破棄して再描画
+  calendarEl.innerHTML = '';
+
   const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
+    initialView: viewMode, // 初期ビューを引数で変更
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,listWeek' // 月・週・リストの切り替え
+    },
     events: calendarEvents
   });
 
   calendar.render();
 };
+
 
 // 複数のJSONファイルを読み込む関数
 const loadTasks = async () => {
