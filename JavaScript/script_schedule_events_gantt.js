@@ -1,7 +1,7 @@
 let allTasks_g = []; // すべてのタスクデータを保持
 
 // 進捗率を計算する関数
-const calculateProgress = (task) => {
+const calculateProgress_g = (task) => {
   const now = new Date();
   const start = new Date(task.start);
   const end = new Date(task.end);
@@ -24,7 +24,7 @@ const getProgressClass = (progress) => {
 // ガントチャートのタスクデータを更新する関数
 const updateTaskProgress = (tasks) => {
   return tasks.map(task => {
-    const progress = calculateProgress(task);
+    const progress = calculateProgress_g(task);
     return { ...task, progress, custom_class: getProgressClass(progress) };
   });
 };
