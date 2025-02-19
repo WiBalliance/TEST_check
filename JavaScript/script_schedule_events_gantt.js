@@ -90,7 +90,7 @@ const updateGantt = (showCompleted, nameFilter = '') => {
 };
 
 // 複数のJSONファイルを読み込む関数
-const loadTasks = async () => {
+const loadTasks_g = async () => {
   const taskFiles = [
     // 終了イベント
     "../tasks/tasks_old.json",                       //終了したイベント
@@ -139,7 +139,7 @@ const loadTasks = async () => {
   }
 };
 
-loadTasks(); // ファイルの読み込みを開始
+loadTasks_g(); // ファイルの読み込みを開始
 
 // チェックボックスのイベントリスナー
 document.getElementById("showCompleted").addEventListener("change", (event) => {
