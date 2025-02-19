@@ -4,59 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>イベントスケジュール</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    #calendar, #gantt {
+    #gantt {
       margin-top: 20px;
-      display: none; /* 最初は非表示 */
+      height: 500px;
     }
     .top-buttons {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: column; /* 縦に並べる */
+      align-items: flex-start; /* 左寄せにする */
       margin-bottom: 20px;
-      gap: 10px;
-      width: 100%;
+      gap: 10px; /* 要素間にスペースを追加 */
+      width: 100%; /* 幅を100%にして、親要素に合わせる */
     }
     label {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 16px;
+      display: block; /* ラベルをブロック要素にして縦に並べる */
+      margin-bottom: 10px; /* ラベル間のスペースを確保 */
+      font-size: 16px; /* フォントサイズの調整 */
     }
     button {
-      margin-top: 10px;
-      padding: 10px 20px;
+      margin-top: 10px; /* ボタン間にスペースを追加 */
+      padding: 10px 20px; /* ボタンの内側に余白を追加 */
       font-size: 16px;
     }
     .title-container {
-      width: 100%;
+      width: 100%; /* 幅を調整して統一感を持たせる */
       font-size: 16px;
       margin-bottom: 20px;
     }
+    /* 進捗率に応じた色付け */
+    .progress-low .bar {
+      fill: #ffcccc; /* 赤 (低進捗) */
+    }
+    .progress-medium .bar {
+      fill: #ffe066; /* 黄色 (中進捗) */
+    }
+    .progress-high .bar {
+      fill: #66ccff; /* 青 (高進捗) */
+    }
+    .progress-complete .bar {
+      fill: #66ff66; /* 緑 (完了) */
+    }
   </style>
-
-  <!-- FullCalendarのCSS -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
 </head>
+
 
 <body>
   <div class="title-container">
-    <h1>イベントスケジュール</h1>
-  </div>
-
-  <!-- 🔽 ビュー切り替えボタン -->
-  <div>
-    <button onclick="toggleView('calendar')">カレンダー表示</button>
-    <button onclick="toggleView('gantt')">ガントチャート表示</button>
-  </div>
-
-  <!-- 🔽 検索ボックスとコピー機能 -->
-  <div>
-    <input type="text" id="taskNameFilter" placeholder="タスク名で検索">
-  </div>
+    <h1>イベントスケジュール（20日後まで）</h1>
+  </div>  
 
   <div class="top-buttons">
     <label>
@@ -66,49 +68,28 @@
     </label>
   </div>
 
-  <!-- 🔽 カレンダー & ガントチャートのコンテナ -->
-  <div id="calendar"></div>
-  <div id="gantt"></div>
+  <div>
+    <input type="text" id="taskNameFilter" placeholder="タスク名で検索">
+  </div>
+  
+  <div>
+    <div id="calendar"></div>
+  </div>
+  <div>
+    <div id="gantt"></div>
+  </div>
+  
+　<!-- FullCalendarのCSS -->
+　<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
 
-  <!-- FullCalendarのJS -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+　<!-- FullCalendarのJS -->
+　<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 
-  <!-- JSを動的に切り替えるスクリプト -->
-  <script>
-    let currentScript = null;
+  <!-- Frappe Ganttライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
 
-    function loadScript(src, callback) {
-      if (currentScript) {
-        document.body.removeChild(currentScript); // 既存のスクリプトを削除
-        currentScript = null;
-        window.allTasks = undefined; // 変数をクリア
-      }
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = callback;
-      document.body.appendChild(script);
-      currentScript = script;
-    }
-
-    function toggleView(view) {
-      if (view === 'calendar') {
-        document.getElementById('calendar').style.display = 'block';
-        document.getElementById('gantt').style.display = 'none';
-        loadScript("../JavaScript/script_schedule_events_calendar.js", () => {
-          console.log("カレンダー表示スクリプトを読み込みました");
-        });
-      } else {
-        document.getElementById('calendar').style.display = 'none';
-        document.getElementById('gantt').style.display = 'block';
-        loadScript("../JavaScript/script_schedule_events_gantt.js", () => {
-          console.log("ガントチャート表示スクリプトを読み込みました");
-        });
-      }
-    }
-
-    // 初期表示をカレンダーにする
-    toggleView('calendar');
-  </script>
-
+  <!-- 外部JavaScriptファイルをリンク -->
+  <script src="../JavaScript/script_schedule_events_calendar.js"></script>
+  <script src="../JavaScript/script_schedule_events_gantt.js"></script>
 </body>
 </html>
