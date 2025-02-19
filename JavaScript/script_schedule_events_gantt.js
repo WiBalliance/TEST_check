@@ -30,7 +30,7 @@ const updateTaskProgress = (tasks) => {
 };
 
 // 繰り返しタスクを展開する関数
-const generateRepeatingTasks = (tasks) => {
+const generateRepeatingTasks_g = (tasks) => {
   const expandedTasks = [];
 
   tasks.forEach(task => {
@@ -132,7 +132,7 @@ const loadTasks = async () => {
     const tasks = await Promise.all(taskFiles.map(file =>
       fetch(file).then(response => response.json())
     ));
-    allTasks_g = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
+    allTasks_g = generateRepeatingTasks_g(tasks.flat()); // 繰り返しタスクを展開
     updateGantt(false); // 初期表示
   } catch (error) {
     console.error('Error loading tasks:', error);
