@@ -141,17 +141,10 @@ const loadTasks_g = async () => {
 
 loadTasks_g(); // ファイルの読み込みを開始
 
-// チェックボックスのイベントリスナー
-document.getElementById("showCompleted").addEventListener("change", (event) => {
-  const nameFilter = document.getElementById("taskNameFilter").value;
-  updateGantt(event.target.checked, nameFilter);
-});
-
 // タスク名でフィルタするイベントリスナー
 document.getElementById("taskNameFilter").addEventListener("input", (event) => {
   const nameFilter = event.target.value;
-  const showCompleted = document.getElementById("showCompleted").checked;
-  updateGantt(showCompleted, nameFilter);
+  updateGantt(nameFilter);
 });
 
 // コピー機能の実装
