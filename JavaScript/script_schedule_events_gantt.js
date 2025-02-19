@@ -141,10 +141,17 @@ const loadTasks_g = async () => {
 
 loadTasks_g(); // ファイルの読み込みを開始
 
+// チェックボックスのイベントリスナー
+document.getElementById("showCompleted").addEventListener("change", (event) => {
+  const nameFilter = document.getElementById("taskNameFilter").value;
+  updateGantt(event.target.checked, nameFilter);
+});
+
 // タスク名でフィルタするイベントリスナー
 document.getElementById("taskNameFilter").addEventListener("input", (event) => {
   const nameFilter = event.target.value;
-  updateGantt(nameFilter);
+  const showCompleted = document.getElementById("showCompleted").checked;
+  updateGantt(showCompleted, nameFilter);
 });
 
 // コピー機能の実装
@@ -246,9 +253,6 @@ document.getElementById("copyButton").addEventListener("click", () => {
     finalTasksToCopy += `【期間中】\n${tasksToCopy_3}\n\n`;
   }
 
-
-
-  
   // 結果を表示またはコピー
   console.log(tasksToCopy_1);
   console.log(tasksToCopy_2);
