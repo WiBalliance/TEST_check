@@ -4,56 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>イベントスケジュール</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
+  
+  <!-- FullCalendarのCSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
+  
+  <!-- Frappe GanttのCSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.css">
+  
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
     }
-    #gantt {
-      margin-top: 20px;
-      height: 500px;
-    }
     .top-buttons {
       display: flex;
-      flex-direction: column; /* 縦に並べる */
-      align-items: flex-start; /* 左寄せにする */
+      flex-direction: column;
+      align-items: flex-start;
       margin-bottom: 20px;
-      gap: 10px; /* 要素間にスペースを追加 */
-      width: 100%; /* 幅を100%にして、親要素に合わせる */
+      gap: 10px;
+      width: 100%;
     }
     label {
-      display: block; /* ラベルをブロック要素にして縦に並べる */
-      margin-bottom: 10px; /* ラベル間のスペースを確保 */
-      font-size: 16px; /* フォントサイズの調整 */
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
     }
     button {
-      margin-top: 10px; /* ボタン間にスペースを追加 */
-      padding: 10px 20px; /* ボタンの内側に余白を追加 */
+      padding: 10px 20px;
       font-size: 16px;
+      cursor: pointer;
     }
-    .title-container {
-      width: 100%; /* 幅を調整して統一感を持たせる */
-      font-size: 16px;
+    .view-buttons {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
     }
-    /* 進捗率に応じた色付け */
-    .progress-low .bar {
-      fill: #ffcccc; /* 赤 (低進捗) */
-    }
-    .progress-medium .bar {
-      fill: #ffe066; /* 黄色 (中進捗) */
-    }
-    .progress-high .bar {
-      fill: #66ccff; /* 青 (高進捗) */
-    }
-    .progress-complete .bar {
-      fill: #66ff66; /* 緑 (完了) */
+    .hidden {
+      display: none;
     }
   </style>
 </head>
-
 
 <body>
   <div class="title-container">
@@ -71,25 +61,41 @@
   <div>
     <input type="text" id="taskNameFilter" placeholder="タスク名で検索">
   </div>
-  
-  <div>
+
+  <!-- 表示切り替えボタン -->
+  <div class="view-buttons">
+    <button onclick="showCalendar()">カレンダー表示</button>
+    <button onclick="showGantt()">ガントチャート表示</button>
+  </div>
+
+  <div id="calendarContainer">
     <div id="calendar"></div>
   </div>
-  <div>
+
+  <div id="ganttContainer" class="hidden">
     <div id="gantt"></div>
   </div>
-  
-　<!-- FullCalendarのCSS -->
-　<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
 
-　<!-- FullCalendarのJS -->
-　<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+  <!-- FullCalendarのJS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 
   <!-- Frappe Ganttライブラリ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
 
-  <!-- 外部JavaScriptファイルをリンク -->
+  <!-- 外部JavaScriptファイル -->
   <script src="../JavaScript/script_schedule_events_calendar.js"></script>
   <script src="../JavaScript/script_schedule_events_gantt.js"></script>
+
+  <script>
+    function showCalendar() {
+      document.getElementById('calendarContainer').classList.remove('hidden');
+      document.getElementById('ganttContainer').classList.add('hidden');
+    }
+
+    function showGantt() {
+      document.getElementById('calendarContainer').classList.add('hidden');
+      document.getElementById('ganttContainer').classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
