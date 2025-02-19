@@ -93,11 +93,21 @@
     function showCalendar() {
       document.getElementById('calendarContainer').classList.remove('hidden');
       document.getElementById('ganttContainer').classList.add('hidden');
+    
+      // カレンダーを再描画
+      if (window.renderCalendar) {
+        renderCalendar(); // script_schedule_events_calendar.js で定義されている関数
+      }
     }
 
     function showGantt() {
       document.getElementById('calendarContainer').classList.add('hidden');
       document.getElementById('ganttContainer').classList.remove('hidden');
+  
+      // ガントチャートを再描画
+      if (window.updateGantt) {
+        updateGantt(); // script_schedule_events_gantt.js で定義されている関数
+      }
     }
   </script>
 </body>
