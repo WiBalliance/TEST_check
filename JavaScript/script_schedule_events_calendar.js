@@ -1,7 +1,7 @@
 let allTasks_c = []; // すべてのタスクデータを保持
 
 // 進捗率を計算する関数
-const calculateProgress = (task) => {
+const calculateProgress_c = (task) => {
   const now = new Date();
   const start = new Date(task.start);
   const end = new Date(task.end);
@@ -72,7 +72,7 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
 
   // FullCalendar 用のイベントデータを作成
   const calendarEvents = filteredTasks.map(task => {
-    const progress = calculateProgress(task);
+    const progress = calculateProgress_c(task);
     const startDate = new Date(task.start);
     const endDate = new Date(task.end);
 
