@@ -112,7 +112,7 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
 };
 
 // 複数のJSONファイルを読み込む関数
-const loadTasks = async () => {
+const loadTasks_c = async () => {
   const taskFiles = [
     "../tasks/tasks_old.json",
     "../tasks/tasks_hyouketsunohihou.json",
@@ -155,7 +155,7 @@ const loadTasks = async () => {
   }
 };
 
-loadTasks(); // ファイルの読み込みを開始
+loadTasks_c(); // ファイルの読み込みを開始
 
 // タスク名でフィルタするイベントリスナー
 document.getElementById("taskNameFilter").addEventListener("input", (event) => {
