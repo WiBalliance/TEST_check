@@ -1,4 +1,4 @@
-let allTasks = []; // すべてのタスクデータを保持
+let allTasks_c = []; // すべてのタスクデータを保持
 
 // 進捗率を計算する関数
 const calculateProgress = (task) => {
@@ -66,7 +66,7 @@ const updateCalendar = (nameFilter = '', viewMode = 'dayGridMonth') => {
   }
 
   // タスクをフィルタリング
-  const filteredTasks = allTasks.filter(task => 
+  const filteredTasks = allTasks_c.filter(task => 
     task.name.toLowerCase().includes(nameFilter.toLowerCase())
   );
 
@@ -148,7 +148,7 @@ const loadTasks = async () => {
     const tasks = await Promise.all(taskFiles.map(file =>
       fetch(file).then(response => response.json())
     ));
-    allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
+    allTasks_c = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
     updateCalendar(); // 初期表示
   } catch (error) {
     console.error('タスクの読み込みエラー:', error);
@@ -180,7 +180,7 @@ const copyTasksForDate = () => {
   const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
   const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
 
-  const targetTasks = allTasks.filter(task => {
+  const targetTasks = allTasks_c.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
 
