@@ -9,34 +9,55 @@
       font-family: Arial, sans-serif;
       margin: 20px;
     }
+    #calendar, #gantt {
+      margin-top: 20px;
+      display: none; /* 最初は非表示 */
+    }
     .top-buttons {
       display: flex;
-      flex-direction: column; /* 縦に並べる */
-      align-items: flex-start; /* 左寄せにする */
+      flex-direction: column;
+      align-items: flex-start;
       margin-bottom: 20px;
-      gap: 10px; /* 要素間にスペースを追加 */
-      width: 100%; /* 幅を100%にして、親要素に合わせる */
+      gap: 10px;
+      width: 100%;
     }
     label {
-      display: block; /* ラベルをブロック要素にして縦に並べる */
-      margin-bottom: 10px; /* ラベル間のスペースを確保 */
-      font-size: 16px; /* フォントサイズの調整 */
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
     }
     button {
-      margin-top: 10px; /* ボタン間にスペースを追加 */
-      padding: 10px 20px; /* ボタンの内側に余白を追加 */
+      margin-top: 10px;
+      padding: 10px 20px;
       font-size: 16px;
     }
     .title-container {
-      width: 100%; /* 幅を調整して統一感を持たせる */
+      width: 100%;
       font-size: 16px;
       margin-bottom: 20px;
     }
   </style>
+
+  <!-- FullCalendarのCSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
 </head>
 
-
 <body>
+  <div class="title-container">
+    <h1>イベントスケジュール</h1>
+  </div>
+
+  <!-- 🔽 ビュー切り替えボタン -->
+  <div>
+    <button onclick="toggleView('calendar')">カレンダー表示</button>
+    <button onclick="toggleView('gantt')">ガントチャート表示</button>
+  </div>
+
+  <!-- 🔽 検索ボックスとコピー機能 -->
+  <div>
+    <input type="text" id="taskNameFilter" placeholder="タスク名で検索">
+  </div>
+
   <div class="top-buttons">
     <label>
       日付選択:
@@ -45,22 +66,47 @@
     </label>
   </div>
 
-  <div>
-    <input type="text" id="taskNameFilter" placeholder="タスク名で検索">
-  </div>
+  <!-- 🔽 カレンダー & ガントチャートのコンテナ -->
+  <div id="calendar"></div>
+  <div id="gantt"></div>
 
-  <div class="title-container">
-    <h1>イベントスケジュール（20日後まで）</h1>
-    <div id="calendar"></div>
-    <!-- <ul id="taskList"></ul> -->
-  </div>  
-  
-　<!-- FullCalendarのCSS -->
-　<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
+  <!-- FullCalendarのJS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 
-　<!-- FullCalendarのJS -->
-　<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+  <!-- JSを動的に切り替えるスクリプト -->
+  <script>
+    let currentScript = null;
 
-  <script src="../JavaScript/script_schedule_events.js"></script>
+    function loadScript(src, callback) {
+      if (currentScript) {
+        document.body.removeChild(currentScript); // 既存のスクリプトを削除
+      }
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = callback;
+      document.body.appendChild(script);
+      currentScript = script;
+    }
+
+    function toggleView(view) {
+      if (view === 'calendar') {
+        document.getElementById('calendar').style.display = 'block';
+        document.getElementById('gantt').style.display = 'none';
+        loadScript("../JavaScript/script_schedule_events_calendar.js", () => {
+          console.log("カレンダー表示スクリプトを読み込みました");
+        });
+      } else {
+        document.getElementById('calendar').style.display = 'none';
+        document.getElementById('gantt').style.display = 'block';
+        loadScript("../JavaScript/script_schedule_events_gantt.js", () => {
+          console.log("ガントチャート表示スクリプトを読み込みました");
+        });
+      }
+    }
+
+    // 初期表示をカレンダーにする
+    toggleView('calendar');
+  </script>
+
 </body>
 </html>
