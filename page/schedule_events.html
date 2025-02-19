@@ -80,6 +80,8 @@
     function loadScript(src, callback) {
       if (currentScript) {
         document.body.removeChild(currentScript); // 既存のスクリプトを削除
+        currentScript = null;
+        window.allTasks = undefined; // 変数をクリア
       }
       const script = document.createElement("script");
       script.src = src;
