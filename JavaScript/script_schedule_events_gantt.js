@@ -1,4 +1,4 @@
-let allTasks = []; // すべてのタスクデータを保持
+let allTasks_g = []; // すべてのタスクデータを保持
 
 // 進捗率を計算する関数
 const calculateProgress = (task) => {
@@ -69,7 +69,7 @@ const updateGantt = (showCompleted, nameFilter = '') => {
   const twoWeeksLater = new Date();
   twoWeeksLater.setDate(now.getDate() + 20); // 現在から20日後の日付
 
-  const filteredTasks = allTasks.filter(task => {
+  const filteredTasks = allTasks_g.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
     const matchesName = task.name.toLowerCase().includes(nameFilter.toLowerCase());
@@ -132,7 +132,7 @@ const loadTasks = async () => {
     const tasks = await Promise.all(taskFiles.map(file =>
       fetch(file).then(response => response.json())
     ));
-    allTasks = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
+    allTasks_g = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
     updateGantt(false); // 初期表示
   } catch (error) {
     console.error('Error loading tasks:', error);
@@ -168,7 +168,7 @@ document.getElementById("copyButton").addEventListener("click", () => {
   const targetStartDate = new Date(targetDate.setHours(0, 0, 0, 0)); // ターゲット日の開始時間（00:00）
   const targetEndDate = new Date(targetDate.setHours(23, 59, 59, 999)); // ターゲット日の終了時間（23:59）
 
-  const targetTasks = allTasks.filter(task => {
+  const targetTasks = allTasks_g.filter(task => {
     const start = new Date(task.start);
     const end = new Date(task.end);
 
