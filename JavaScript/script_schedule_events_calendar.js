@@ -24,7 +24,7 @@ const getProgressColor = (progress) => {
 };
 
 // 繰り返しタスクを展開する関数
-const generateRepeatingTasks = (tasks) => {
+const generateRepeatingTasks_c = (tasks) => {
   const expandedTasks = [];
 
   tasks.forEach(task => {
@@ -148,7 +148,7 @@ const loadTasks = async () => {
     const tasks = await Promise.all(taskFiles.map(file =>
       fetch(file).then(response => response.json())
     ));
-    allTasks_c = generateRepeatingTasks(tasks.flat()); // 繰り返しタスクを展開
+    allTasks_c = generateRepeatingTasks_c(tasks.flat()); // 繰り返しタスクを展開
     updateCalendar(); // 初期表示
   } catch (error) {
     console.error('タスクの読み込みエラー:', error);
