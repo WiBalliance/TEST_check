@@ -23,7 +23,8 @@ async function loadTaskData(){
     localStorage.setItem("taskData", JSON.stringify(taskData));
   }
   render();
-  checkAuth();
+  checkPageAuth();
+  checkParentAuth();
 }
 
 function getTodayTasks() {
