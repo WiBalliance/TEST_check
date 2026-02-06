@@ -1,111 +1,52 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WiBトップページ</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .container {
-      display: flex; /* フレックスボックスを使用 */
-      flex-direction: column; /* 縦に並べる */
-      align-items: center; /* 水平方向に中央揃え */
-      justify-content: center; /* 垂直方向に中央揃え */
-      height: 100vh; /* ビューポートの高さに合わせる */
-      padding: 20px;
-    }
-    h1 {
-      font-size: 36px;
-      color: #333;
-    }
-    .button {
-      background-color: #4CAF50;
-      color: white;
-      font-size: 18px;
-      padding: 15px 30px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
-      display: block; /* ボタンをブロック要素にして縦に並べる */
-      width: 100%; /* ボタンの幅を100%に */
-      max-width: 300px; /* 最大幅を設定 */
-    }
-    .button_2 {
-      background-color: #4c63af;
-      color: white;
-      font-size: 18px;
-      padding: 15px 30px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
-      display: block; /* ボタンをブロック要素にして縦に並べる */
-      width: 100%; /* ボタンの幅を100%に */
-      max-width: 300px; /* 最大幅を設定 */
-    }
-    .button_3 {
-      background-color: #07bab4;
-      color: white;
-      font-size: 18px;
-      padding: 15px 30px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
-      display: block; /* ボタンをブロック要素にして縦に並べる */
-      width: 100%; /* ボタンの幅を100%に */
-      max-width: 300px; /* 最大幅を設定 */
-    }
-    #days {
-      font-size: 20px;
-      color: #333;
-      margin-top: 20px;
-    }
-  </style>
-  <script>
-    function calculateDays() {
-      // 基準となる日付 (例: 2025年1月1日)
-      const startDate = new Date("2024-07-31");
-
-      // 現在の日付
-      const currentDate = new Date();
-
-      // 両者の差を計算 (ミリ秒単位)
-      const timeDifference = currentDate - startDate;
-
-      // ミリ秒から日数に変換
-      const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-      // 結果を表示
-      document.getElementById("days").textContent = "サーバ経過日数: " + daysDifference + "日";
-    }
-
-    window.onload = calculateDays;
-  </script>
+<meta charset="UTF-8">
+<title>こどもタスク</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <div class="container">
-    <h1>ようこそ</h1>
-    <!-- 経過日数を表示する場所 -->
-    <p id="days"></p>
-    <a href="./page/schedule_events.html" class="button">イベントスケジュール</a>
-    <a href="./page/schedule_st.html" class="button">STスケジュール</a>
-    <a href="./page/chat.html" class="button_3">ﾁｮｯﾄ・情報連携</a>
-    <a href="./page/time.html" class="button">(開始までの)時間計算</a>
-    <a href="./page/schedule_ank.html" class="button">砦要塞アンケートリスト作成</a>
-    <a href="./page/Team_division.html" class="button">チーム分け</a>
-    <a href="./page/maruhi.html" class="button">㊙</a>
-    <!-- <a href="./files/ホワサバ.zip" download class="button">ダウンロード</a> -->
-    <a href="https://wos-giftcode.centurygame.com/" class="button_2">ギフコ交換ページ</a>
-  </div>
+
+<h1 id="date"></h1>
+<div id="counter"></div>
+
+<button id="parentBtn" onclick="askPassword()">おうちのひと</button>
+
+<div id="parentPanel">
+  <h3>編集する曜日</h3>
+
+  <select id="editDay" onchange="loadEditDay()">
+    <option value="common">共通</option>
+    <option value="月">月</option><option value="火">火</option><option value="水">水</option>
+    <option value="木">木</option><option value="金">金</option><option value="土">土</option><option value="日">日</option>
+  </select>
+
+  <div>あさ</div><textarea id="morningBox"></textarea>
+  <div>ゆうがた</div><textarea id="eveningBox"></textarea>
+  <div>ねるまえ</div><textarea id="nightBox"></textarea>
+
+  <div>ならいごと と タスク</div>
+  <div id="lessonEditContainer"></div>
+  <button onclick="addLessonRow()">ならいごとを追加</button>
+
+  <br>
+  <button onclick="saveTasks()">保存</button>
+  <br>
+
+  <button onclick="exportData()">エクスポート</button>
+  <input type="file" onchange="importData(event)">
+
+  <br>
+  <button onclick="closeParent()">とじる</button>
+</div>
+
+<div id="tasks"></div>
+
+<label for="schoolToggle">ほいくえん</label>
+<input type="checkbox" id="schoolToggle" onchange="toggleSchoolTasks()">
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
